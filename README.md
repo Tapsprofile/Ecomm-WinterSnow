@@ -56,3 +56,4 @@ Frontend expects the API at `VITE_API_BASE_URL` (default in `.env.example` is `h
 ## Documentation
 
 - `docs/WinterSnow-Product-Documentation.md`
+- `docs/Shopify-Parity-Roadmap.md`

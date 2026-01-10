@@ -1,13 +1,17 @@
 using Microsoft.Extensions.DependencyInjection;
 using WinterSnow.Data.Repositories;
 using WinterSnow.Services.Admin;
+using WinterSnow.Services.Auditing;
 using WinterSnow.Services.Catalog;
+using WinterSnow.Services.Configuration;
 using WinterSnow.Services.Discovery;
 using WinterSnow.Services.Iam;
 using WinterSnow.Services.Orders;
 using WinterSnow.Services.Payments;
+using WinterSnow.Services.Returns;
 using WinterSnow.Services.System;
 using WinterSnow.Services.Vendor;
+using WinterSnow.Services.Webhooks;
 
 namespace WinterSnow.Services;
 
@@ -37,6 +41,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVendorDashboardService, VendorDashboardService>();
         services.AddScoped<IVendorListingService, VendorListingService>();
         services.AddScoped<IAdminService, AdminService>();
+
+        // Shopify parity foundations
+        services.AddScoped<ISettingService, SettingService>();
+        services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<IWebhookAdminService, WebhookAdminService>();
+        services.AddScoped<IWebhookDispatcher, WebhookDispatcher>();
+        services.AddScoped<IReturnService, ReturnService>();
 
         return services;
     }

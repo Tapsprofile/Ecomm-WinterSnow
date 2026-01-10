@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,12 +7,14 @@ using WinterSnow.Data;
 using WinterSnow.Services;
 using WinterSnow.Services.Iam;
 using WinterSnow.Services.System;
+using WinterSnow.Services.Auditing;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 
 builder.Services.AddCors(o =>
 {
@@ -98,6 +101,36 @@ app.Use(async (ctx, next) =>
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
+
+// Basic audit log (Shopify parity foundation): record admin/vendor/customer API actions.
+app.Use(async (ctx, next) =>
+{
+    await next();
+
+    if (!ctx.Request.Path.StartsWithSegments("/api"))
+        return;
+
+    var audit = ctx.RequestServices.GetService<IAuditService>();
+    if (audit is null)
+        return;
+
+    var userIdStr = ctx.User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)
+                    ?? ctx.User.FindFirstValue("sub");
+    _ = int.TryParse(userIdStr, out var userId);
+    var role = ctx.User.FindFirstValue(System.Security.Claims.ClaimTypes.Role);
+
+    // Keep it lightweight; richer metadata can be added later.
+    await audit.WriteAsync(new WinterSnow.Services.Auditing.AuditEntry
+    {
+        UserId = userId == 0 ? null : userId,
+        Role = role,
+        Action = $"{role ?? "Anonymous"}.{ctx.Request.Method}",
+        Path = ctx.Request.Path,
+        Method = ctx.Request.Method,
+        StatusCode = ctx.Response.StatusCode
+    });
+});
+
 app.UseAuthorization();
 app.MapControllers();
 

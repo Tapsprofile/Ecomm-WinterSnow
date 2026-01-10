@@ -81,3 +81,6 @@
 /workspace/backend/src/WinterSnow.WebApi/obj/Release/net8.0/WinterSnow.WebApi.pdb
 /workspace/backend/src/WinterSnow.WebApi/obj/Release/net8.0/WinterSnow.WebApi.genruntimeconfig.cache
 /workspace/backend/src/WinterSnow.WebApi/obj/Release/net8.0/ref/WinterSnow.WebApi.dll
+/workspace/backend/src/WinterSnow.WebApi/bin/Release/net8.0/Microsoft.Extensions.Diagnostics.dll
+/workspace/backend/src/WinterSnow.WebApi/bin/Release/net8.0/Microsoft.Extensions.Diagnostics.Abstractions.dll
+/workspace/backend/src/WinterSnow.WebApi/bin/Release/net8.0/Microsoft.Extensions.Http.dll
