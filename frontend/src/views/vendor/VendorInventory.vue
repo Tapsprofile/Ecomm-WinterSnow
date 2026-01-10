@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { apiGet, apiPost } from '../../lib/api'
+import { apiGet, apiPost, apiPut } from '../../lib/api'
 
 const loading = ref(true)
 const saving = ref(false)
@@ -30,6 +30,22 @@ async function bulkSave() {
   saving.value = true
   error.value = null
   try {
+    // Save product-level fields (discounts/coupon eligibility) first.
+    for (const p of items.value) {
+      await apiPut(`/api/vendor/listings/${p.productId}`, {
+        name: p.name,
+        shortDescription: p.shortDescription ?? null,
+        fullDescription: p.fullDescription ?? null,
+        material: p.material ?? null,
+        categoryId: p.categoryId ?? null,
+        price: p.price,
+        allowCoupons: !!p.allowCoupons,
+        discountPercent: p.discountPercent ?? null,
+        discountStartUtc: p.discountStartUtc ?? null,
+        discountEndUtc: p.discountEndUtc ?? null
+      })
+    }
+
     const variants = []
     for (const p of items.value) {
       for (const v of p.variants) {
@@ -59,7 +75,7 @@ async function bulkSave() {
     <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap;">
       <div>
         <div style="font-weight:900;">Inventory Manager</div>
-        <div class="muted">Search, bulk edit prices/stock, manage variations.</div>
+        <div class="muted">Search, bulk edit prices/stock, manage discounts and coupon eligibility.</div>
       </div>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
         <input class="input" style="width:260px;" v-model="q" placeholder="Search products…" />
@@ -75,6 +91,7 @@ async function bulkSave() {
           <th>Product</th>
           <th>Base Price</th>
           <th>Status</th>
+          <th>Discount / Coupons</th>
           <th style="width:45%;">Variations (Size/Color Matrix)</th>
         </tr>
       </thead>
@@ -88,6 +105,28 @@ async function bulkSave() {
           <td>
             <span class="pill" v-if="p.isApprovedByAdmin && p.published">Live</span>
             <span class="pill" v-else>Pending approval</span>
+          </td>
+          <td>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <label style="display:flex; gap:8px; align-items:center;">
+                <input type="checkbox" v-model="p.allowCoupons" />
+                Allow coupons
+              </label>
+              <label>
+                <div class="muted" style="font-size:12px; margin-bottom:6px;">Discount %</div>
+                <input class="input" type="number" min="0" max="100" v-model.number="p.discountPercent" />
+              </label>
+              <div class="row">
+                <label class="col">
+                  <div class="muted" style="font-size:12px; margin-bottom:6px;">Start (UTC)</div>
+                  <input class="input" v-model="p.discountStartUtc" placeholder="2026-01-10T00:00:00Z" />
+                </label>
+                <label class="col">
+                  <div class="muted" style="font-size:12px; margin-bottom:6px;">End (UTC)</div>
+                  <input class="input" v-model="p.discountEndUtc" placeholder="2026-01-17T00:00:00Z" />
+                </label>
+              </div>
+            </div>
           </td>
           <td>
             <div style="display:flex; flex-direction:column; gap:10px;">

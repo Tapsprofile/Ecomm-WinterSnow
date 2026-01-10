@@ -17,7 +17,14 @@ defineProps({
       <div v-else class="muted" style="padding:12px;">No image</div>
     </div>
     <div style="margin-top:10px; font-weight:700; line-height:1.2;">{{ item.name }}</div>
-    <div class="muted" style="margin-top:6px;">{{ item.currency }} {{ item.price }}</div>
+    <div style="margin-top:6px;">
+      <span style="font-weight:900;">{{ item.currency }} {{ item.price }}</span>
+      <span v-if="item.originalPrice" class="muted" style="margin-left:8px; text-decoration:line-through;">
+        {{ item.currency }} {{ item.originalPrice }}
+      </span>
+      <span v-if="item.discountPercent" class="pill" style="margin-left:8px;">-{{ item.discountPercent }}%</span>
+      <span v-if="item.allowCoupons" class="pill" style="margin-left:6px;">Coupons</span>
+    </div>
     <div v-if="item.ratingCount" class="muted" style="margin-top:6px; font-size:12px;">
       Rating: {{ item.ratingAvg.toFixed(1) }} ({{ item.ratingCount }})
     </div>

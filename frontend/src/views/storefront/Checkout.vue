@@ -26,6 +26,7 @@ const address = ref({
 const addressValidation = ref(null)
 const splitPreview = ref([])
 const paymentSessionId = ref(null)
+const couponCode = ref('')
 
 const checkoutItems = computed(() =>
   cart.items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity }))
@@ -60,7 +61,10 @@ async function loadPreview() {
   error.value = null
   loading.value = true
   try {
-    splitPreview.value = await apiPost('/api/storefront/checkout/preview', checkoutItems.value)
+    splitPreview.value = await apiPost('/api/storefront/checkout/preview-v2', {
+      items: checkoutItems.value,
+      couponCode: couponCode.value || null
+    })
     step.value = 3
   } catch (e) {
     error.value = e?.message || 'Preview failed'
@@ -76,7 +80,8 @@ async function submitPayment() {
     if (!auth.isAuthenticated) throw new Error('Please login as a customer to submit checkout.')
     const res = await apiPost('/api/storefront/checkout/submit', {
       shippingAddress: address.value,
-      items: checkoutItems.value
+      items: checkoutItems.value,
+      couponCode: couponCode.value || null
     })
     paymentSessionId.value = res.paymentSessionId
   } catch (e) {
@@ -180,6 +185,10 @@ async function submitPayment() {
         <div v-else-if="step === 2" class="card">
           <div style="font-weight:900; margin-bottom:10px;">2) Order Summary (split by vendor)</div>
           <div class="muted">This step previews how a single cart becomes multiple vendor orders.</div>
+          <label style="display:block; margin-top:12px;">
+            <div class="muted" style="font-size:12px; margin-bottom:6px;">Coupon code (optional)</div>
+            <input class="input" v-model="couponCode" placeholder="WINTER10" />
+          </label>
           <button class="btn primary" style="margin-top:12px; width:100%;" :disabled="loading" @click="loadPreview">
             {{ loading ? 'Loading…' : 'Load Summary' }}
           </button>
@@ -192,9 +201,13 @@ async function submitPayment() {
             <div v-for="s in splitPreview" :key="s.vendorId" class="card" style="background:#f8fafc;">
               <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
                 <b>Vendor #{{ s.vendorId }}</b>
-                <span class="pill">{{ s.currency }} {{ s.orderTotal }}</span>
+                <span class="pill">{{ s.currency }} {{ s.orderTotalAfterDiscount ?? s.orderTotal }}</span>
               </div>
-              <div class="muted" style="font-size:12px; margin-top:6px;">Subtotal {{ s.subtotal }} + shipping {{ (s.orderTotal - s.subtotal).toFixed(2) }}</div>
+              <div class="muted" style="font-size:12px; margin-top:6px;">
+                Subtotal {{ s.subtotal }}
+                + shipping {{ (s.orderTotal - s.subtotal).toFixed(2) }}
+                <span v-if="s.discountTotal"> - discount {{ s.discountTotal }}</span>
+              </div>
               <ul style="margin:10px 0 0; padding-left:18px;">
                 <li v-for="it in s.items" :key="it.productId">
                   {{ it.productName || `Product ${it.productId}` }} × {{ it.quantity }} ({{ it.unitPrice }})

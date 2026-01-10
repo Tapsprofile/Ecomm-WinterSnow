@@ -44,8 +44,19 @@ public class SearchService : ISearchService
     {
         var q = query.Q?.Trim();
 
+        var now = DateTime.UtcNow;
+
+        // Only show customer-visible listings:
+        // - approved + published
+        // - at least one variant has stock > 0
+        var inStockProductIds = _variants.Table
+            .Where(v => v.StockQuantity > 0)
+            .Select(v => v.ProductId)
+            .Distinct();
+
         var baseProducts = _products.Table
-            .Where(p => p.Published && p.IsApprovedByAdmin);
+            .Where(p => p.Published && p.IsApprovedByAdmin)
+            .Where(p => inStockProductIds.Contains(p.Id));
 
         if (!string.IsNullOrWhiteSpace(q))
             baseProducts = baseProducts.Where(p => p.Name.Contains(q) || (p.ShortDescription != null && p.ShortDescription.Contains(q)));
@@ -82,7 +93,18 @@ public class SearchService : ISearchService
             .OrderByDescending(p => p.Id)
             .Skip(skip)
             .Take(pageSize)
-            .Select(p => new { p.Id, p.Name, p.Slug, p.Price, p.Currency })
+            .Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Slug,
+                p.Price,
+                p.Currency,
+                p.AllowCoupons,
+                p.DiscountPercent,
+                p.DiscountStartUtc,
+                p.DiscountEndUtc
+            })
             .ToListAsync(ct);
 
         var productIdsPage = productPage.Select(x => x.Id).ToList();
@@ -142,12 +164,26 @@ public class SearchService : ISearchService
             {
                 var thumb = thumbs.FirstOrDefault(t => t.ProductId == p.Id)?.Url;
                 var rating = ratings.FirstOrDefault(r => r.ProductId == p.Id);
+
+                var discountActive =
+                    p.DiscountPercent is not null &&
+                    (p.DiscountStartUtc is null || p.DiscountStartUtc <= now) &&
+                    (p.DiscountEndUtc is null || p.DiscountEndUtc >= now) &&
+                    p.DiscountPercent.Value > 0;
+
+                var finalPrice = discountActive
+                    ? Math.Round(p.Price * (1 - (p.DiscountPercent!.Value / 100m)), 2)
+                    : p.Price;
+
                 return new SearchResultItem
                 {
                     ProductId = p.Id,
                     Name = p.Name,
                     Slug = p.Slug,
-                    Price = p.Price,
+                    Price = finalPrice,
+                    OriginalPrice = discountActive ? p.Price : null,
+                    DiscountPercent = discountActive ? p.DiscountPercent : null,
+                    AllowCoupons = p.AllowCoupons,
                     Currency = p.Currency,
                     ThumbnailUrl = thumb,
                     RatingAvg = rating?.Avg ?? 0,

@@ -58,6 +58,11 @@ var app = builder.Build();
 // Seed demo data (dev-friendly).
 using (var scope = app.Services.CreateScope())
 {
+    if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("Dev:ResetDbOnStartup"))
+    {
+        var db = scope.ServiceProvider.GetRequiredService<WinterSnowDbContext>();
+        await db.Database.EnsureDeletedAsync();
+    }
     var seeder = scope.ServiceProvider.GetRequiredService<DatabaseBootstrapper>();
     await seeder.EnsureSeededAsync();
 }

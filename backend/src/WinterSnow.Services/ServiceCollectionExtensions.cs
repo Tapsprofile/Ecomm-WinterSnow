@@ -35,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICheckoutService, CheckoutService>();
 
         services.AddScoped<IVendorDashboardService, VendorDashboardService>();
+        services.AddScoped<IVendorListingService, VendorListingService>();
         services.AddScoped<IAdminService, AdminService>();
 
         return services;

@@ -15,6 +15,7 @@ public class Order : BaseEntity
     public int ShippingAddressId { get; set; }
 
     public decimal Subtotal { get; set; }
+    public decimal DiscountTotal { get; set; }
     public decimal ShippingFee { get; set; }
     public decimal TaxTotal { get; set; }
     public decimal OrderTotal { get; set; }

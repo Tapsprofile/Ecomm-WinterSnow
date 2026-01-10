@@ -8,8 +8,12 @@ public class ProductDetails
     public string? ShortDescription { get; set; }
     public string? FullDescription { get; set; }
     public string? Material { get; set; }
+    public int? CategoryId { get; set; }
 
     public decimal Price { get; set; }
+    public decimal? OriginalPrice { get; set; }
+    public decimal? DiscountPercent { get; set; }
+    public bool AllowCoupons { get; set; }
     public string Currency { get; set; } = "INR";
 
     public List<ProductMediaDto> Media { get; set; } = [];

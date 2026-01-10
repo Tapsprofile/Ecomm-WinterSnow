@@ -14,11 +14,13 @@ namespace WinterSnow.WebApi.Controllers;
 public class VendorController : ControllerBase
 {
     private readonly IVendorDashboardService _dashboard;
+    private readonly IVendorListingService _listings;
     private readonly WinterSnowDbContext _db;
 
-    public VendorController(IVendorDashboardService dashboard, WinterSnowDbContext db)
+    public VendorController(IVendorDashboardService dashboard, IVendorListingService listings, WinterSnowDbContext db)
     {
         _dashboard = dashboard;
+        _listings = listings;
         _db = db;
     }
 
@@ -38,6 +40,29 @@ public class VendorController : ControllerBase
         if (VendorId <= 0)
             return Unauthorized();
         return Ok(await _dashboard.GetInventoryAsync(VendorId, ct));
+    }
+
+    [HttpGet("categories")]
+    public async Task<ActionResult<List<CategoryDto>>> Categories(CancellationToken ct)
+        => Ok(await _listings.GetCategoriesAsync(ct));
+
+    [HttpPost("listings")]
+    public async Task<ActionResult<object>> CreateListing([FromBody] CreateListingRequest req, CancellationToken ct)
+    {
+        if (VendorId <= 0)
+            return Unauthorized();
+
+        var id = await _listings.CreateListingAsync(VendorId, req, ct);
+        return Ok(new { productId = id });
+    }
+
+    [HttpPut("listings/{productId:int}")]
+    public async Task<IActionResult> UpdateListing([FromRoute] int productId, [FromBody] UpdateListingRequest req, CancellationToken ct)
+    {
+        if (VendorId <= 0)
+            return Unauthorized();
+        await _listings.UpdateListingAsync(VendorId, productId, req, ct);
+        return NoContent();
     }
 
     [HttpPost("inventory/bulk-update")]

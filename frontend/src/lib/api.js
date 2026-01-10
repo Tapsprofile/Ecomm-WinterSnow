@@ -10,6 +10,10 @@ export async function apiPost(path, body) {
   return request(path, { method: 'POST', body: body ? JSON.stringify(body) : undefined })
 }
 
+export async function apiPut(path, body) {
+  return request(path, { method: 'PUT', body: body ? JSON.stringify(body) : undefined })
+}
+
 export async function apiDelete(path) {
   return request(path, { method: 'DELETE' })
 }

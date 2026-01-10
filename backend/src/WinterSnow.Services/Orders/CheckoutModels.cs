@@ -11,6 +11,13 @@ public class CheckoutRequest
 {
     public required ShippingAddressInput ShippingAddress { get; set; }
     public List<CheckoutItem> Items { get; set; } = [];
+    public string? CouponCode { get; set; }
+}
+
+public class CheckoutPreviewRequestV2
+{
+    public List<CheckoutItem> Items { get; set; } = [];
+    public string? CouponCode { get; set; }
 }
 
 public class ShippingAddressInput
@@ -36,7 +43,9 @@ public class SplitOrderSummary
 {
     public int VendorId { get; set; }
     public decimal Subtotal { get; set; }
+    public decimal DiscountTotal { get; set; }
     public decimal OrderTotal { get; set; }
+    public decimal OrderTotalAfterDiscount { get; set; }
     public string Currency { get; set; } = "INR";
     public List<SplitOrderItem> Items { get; set; } = [];
 }

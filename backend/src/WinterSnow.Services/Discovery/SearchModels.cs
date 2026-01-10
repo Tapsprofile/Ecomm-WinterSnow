@@ -32,6 +32,9 @@ public class SearchResultItem
     public required string Name { get; set; }
     public required string Slug { get; set; }
     public decimal Price { get; set; }
+    public decimal? OriginalPrice { get; set; }
+    public decimal? DiscountPercent { get; set; }
+    public bool AllowCoupons { get; set; }
     public string Currency { get; set; } = "INR";
     public string? ThumbnailUrl { get; set; }
     public double RatingAvg { get; set; }

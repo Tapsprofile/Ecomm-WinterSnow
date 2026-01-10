@@ -89,6 +89,11 @@ onMounted(async () => {
 
           <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
             <div style="font-weight:900; font-size:22px;">{{ product.currency }} {{ effectivePrice }}</div>
+            <span v-if="product.originalPrice" class="muted" style="text-decoration:line-through;">
+              {{ product.currency }} {{ product.originalPrice }}
+            </span>
+            <span v-if="product.discountPercent" class="pill">-{{ product.discountPercent }}%</span>
+            <span v-if="product.allowCoupons" class="pill">Coupons eligible</span>
             <span v-if="product.material" class="pill">Material: {{ product.material }}</span>
           </div>
 

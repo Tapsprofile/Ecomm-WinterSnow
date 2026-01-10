@@ -51,6 +51,7 @@ public class WinterSnowDbContext : DbContext
         {
             b.HasIndex(x => x.Slug).IsUnique();
             b.HasIndex(x => x.VendorId);
+            b.HasIndex(x => x.CategoryId);
         });
 
         modelBuilder.Entity<ProductVariant>(b =>

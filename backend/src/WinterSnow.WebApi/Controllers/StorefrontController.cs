@@ -68,6 +68,10 @@ public class StorefrontController : ControllerBase
     public async Task<ActionResult<List<SplitOrderSummary>>> Preview([FromBody] List<CheckoutItem> items, CancellationToken ct)
         => Ok(await _checkout.PreviewSplitAsync(items, ct));
 
+    [HttpPost("checkout/preview-v2")]
+    public async Task<ActionResult<List<SplitOrderSummary>>> PreviewV2([FromBody] CheckoutPreviewRequestV2 req, CancellationToken ct)
+        => Ok(await _checkout.PreviewSplitV2Async(req, ct));
+
     [Authorize(Roles = "Customer")]
     [HttpPost("checkout/submit")]
     public async Task<ActionResult<CheckoutResult>> Submit([FromBody] CheckoutRequest req, CancellationToken ct)

@@ -13,6 +13,7 @@ import VendorDashboard from '../views/vendor/VendorDashboard.vue'
 import VendorInventory from '../views/vendor/VendorInventory.vue'
 import VendorOrders from '../views/vendor/VendorOrders.vue'
 import VendorPayouts from '../views/vendor/VendorPayouts.vue'
+import VendorCreateListing from '../views/vendor/VendorCreateListing.vue'
 
 import AdminLayout from '../layouts/AdminLayout.vue'
 import AdminModeration from '../views/admin/AdminModeration.vue'
@@ -37,6 +38,7 @@ export function createRouter() {
         meta: { requiresAuth: true, role: 'Vendor' },
         children: [
           { path: '', name: 'vendor.dashboard', component: VendorDashboard },
+          { path: 'listings/new', name: 'vendor.listings.new', component: VendorCreateListing },
           { path: 'inventory', name: 'vendor.inventory', component: VendorInventory },
           { path: 'orders', name: 'vendor.orders', component: VendorOrders },
           { path: 'payouts', name: 'vendor.payouts', component: VendorPayouts }

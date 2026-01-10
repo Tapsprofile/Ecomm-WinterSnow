@@ -13,6 +13,7 @@ import TopNav from '../components/ui/TopNav.vue'
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <RouterLink class="btn" to="/vendor">Overview</RouterLink>
+          <RouterLink class="btn primary" to="/vendor/listings/new">Add Listing</RouterLink>
           <RouterLink class="btn" to="/vendor/inventory">Inventory</RouterLink>
           <RouterLink class="btn" to="/vendor/orders">Orders</RouterLink>
           <RouterLink class="btn" to="/vendor/payouts">Payouts</RouterLink>

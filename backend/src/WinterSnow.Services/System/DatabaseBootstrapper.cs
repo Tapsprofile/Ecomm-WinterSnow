@@ -89,6 +89,10 @@ public class DatabaseBootstrapper
             Price = 1999,
             Currency = "INR",
             VendorId = vendor1.Id,
+            AllowCoupons = true,
+            DiscountPercent = 10,
+            DiscountStartUtc = DateTime.UtcNow.AddDays(-1),
+            DiscountEndUtc = DateTime.UtcNow.AddDays(7),
             Published = true,
             IsApprovedByAdmin = true,
             MetaTitle = "Senior Software Developer",
@@ -105,6 +109,7 @@ public class DatabaseBootstrapper
             Price = 799,
             Currency = "INR",
             VendorId = vendor1.Id,
+            AllowCoupons = true,
             Published = true,
             IsApprovedByAdmin = true
         };
@@ -119,6 +124,7 @@ public class DatabaseBootstrapper
             Price = 3499,
             Currency = "INR",
             VendorId = vendor2.Id,
+            AllowCoupons = false,
             Published = false,
             IsApprovedByAdmin = false
         };

@@ -21,7 +21,15 @@ public class VendorInventoryItem
     public int ProductId { get; set; }
     public required string Name { get; set; }
     public required string Slug { get; set; }
+    public string? ShortDescription { get; set; }
+    public string? FullDescription { get; set; }
+    public string? Material { get; set; }
+    public int? CategoryId { get; set; }
     public decimal Price { get; set; }
+    public bool AllowCoupons { get; set; }
+    public decimal? DiscountPercent { get; set; }
+    public DateTime? DiscountStartUtc { get; set; }
+    public DateTime? DiscountEndUtc { get; set; }
     public bool Published { get; set; }
     public bool IsApprovedByAdmin { get; set; }
     public List<InventoryVariant> Variants { get; set; } = [];

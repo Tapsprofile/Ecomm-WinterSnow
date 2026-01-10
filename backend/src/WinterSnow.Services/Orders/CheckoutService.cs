@@ -3,6 +3,7 @@ using WinterSnow.Core.Domain.Catalog;
 using WinterSnow.Core.Domain.Orders;
 using WinterSnow.Core.Domain.Payments;
 using WinterSnow.Core.Domain.Customers;
+using WinterSnow.Core.Domain.Marketing;
 using WinterSnow.Data;
 using WinterSnow.Services.Payments;
 
@@ -26,6 +27,17 @@ public class CheckoutService : ICheckoutService
 
     public async Task<List<SplitOrderSummary>> PreviewSplitAsync(List<CheckoutItem> items, CancellationToken ct = default)
     {
+        return await PreviewInternalAsync(items, couponCode: null, ct);
+    }
+
+    public async Task<List<SplitOrderSummary>> PreviewSplitV2Async(CheckoutPreviewRequestV2 request, CancellationToken ct = default)
+    {
+        return await PreviewInternalAsync(request.Items, request.CouponCode, ct);
+    }
+
+    private async Task<List<SplitOrderSummary>> PreviewInternalAsync(List<CheckoutItem> items, string? couponCode, CancellationToken ct)
+    {
+        var now = DateTime.UtcNow;
         var normalized = items
             .Where(i => i.Quantity > 0)
             .GroupBy(i => new { i.ProductId, i.VariantId })
@@ -49,13 +61,27 @@ public class CheckoutService : ICheckoutService
             if (!products.TryGetValue(item.ProductId, out var product))
                 continue;
 
-            decimal unitPrice = product.Price;
+            decimal basePrice = product.Price;
             if (item.VariantId is not null && variants.TryGetValue(item.VariantId.Value, out var variant) && variant.OverridePrice is not null)
-                unitPrice = variant.OverridePrice.Value;
+                basePrice = variant.OverridePrice.Value;
+
+            var discountActive =
+                product.DiscountPercent is not null &&
+                (product.DiscountStartUtc is null || product.DiscountStartUtc <= now) &&
+                (product.DiscountEndUtc is null || product.DiscountEndUtc >= now) &&
+                product.DiscountPercent.Value > 0;
+
+            var unitPrice = discountActive
+                ? Math.Round(basePrice * (1 - (product.DiscountPercent!.Value / 100m)), 2)
+                : basePrice;
 
             if (!result.TryGetValue(product.VendorId, out var summary))
             {
-                summary = new SplitOrderSummary { VendorId = product.VendorId, Currency = product.Currency };
+                summary = new SplitOrderSummary
+                {
+                    VendorId = product.VendorId,
+                    Currency = product.Currency
+                };
                 result[product.VendorId] = summary;
             }
 
@@ -74,6 +100,54 @@ public class CheckoutService : ICheckoutService
             // Starter logic: flat shipping per vendor
             var shipping = s.Subtotal > 999 ? 0 : 79;
             s.OrderTotal = s.Subtotal + shipping;
+            s.DiscountTotal = 0;
+            s.OrderTotalAfterDiscount = s.OrderTotal;
+        }
+
+        // Coupon application (global fixed amount, allocated to eligible items)
+        if (!string.IsNullOrWhiteSpace(couponCode))
+        {
+            var code = couponCode.Trim().ToUpperInvariant();
+            var coupon = await _db.Coupons.FirstOrDefaultAsync(c =>
+                c.Code == code &&
+                c.IsActive &&
+                (c.StartUtc == null || c.StartUtc <= now) &&
+                (c.EndUtc == null || c.EndUtc >= now), ct);
+
+            if (coupon is not null && coupon.DiscountAmount > 0)
+            {
+                // Eligible subtotal = items whose Product.AllowCoupons is true
+                var eligibleByVendor = new Dictionary<int, decimal>();
+                foreach (var s in result.Values)
+                {
+                    var eligible = 0m;
+                    foreach (var line in s.Items)
+                    {
+                        if (products.TryGetValue(line.ProductId, out var p) && p.AllowCoupons)
+                            eligible += line.UnitPrice * line.Quantity;
+                    }
+                    eligibleByVendor[s.VendorId] = eligible;
+                }
+
+                var eligibleTotal = eligibleByVendor.Values.Sum();
+                if (eligibleTotal > 0)
+                {
+                    var maxDiscount = Math.Min(coupon.DiscountAmount, eligibleTotal);
+                    foreach (var s in result.Values)
+                    {
+                        var eligible = eligibleByVendor[s.VendorId];
+                        if (eligible <= 0)
+                            continue;
+
+                        var share = eligible / eligibleTotal;
+                        var discount = Math.Round(maxDiscount * share, 2);
+                        discount = Math.Min(discount, s.Subtotal); // don't exceed items subtotal
+
+                        s.DiscountTotal = discount;
+                        s.OrderTotalAfterDiscount = Math.Max(0, s.OrderTotal - discount);
+                    }
+                }
+            }
         }
 
         return result.Values.OrderBy(x => x.VendorId).ToList();
@@ -85,7 +159,7 @@ public class CheckoutService : ICheckoutService
         if (!addressValidation.IsValid || addressValidation.Normalized is null)
             throw new InvalidOperationException(addressValidation.Message ?? "Invalid address.");
 
-        var split = await PreviewSplitAsync(request.Items, ct);
+        var split = await PreviewInternalAsync(request.Items, request.CouponCode, ct);
         if (split.Count == 0)
             throw new InvalidOperationException("Cart is empty or contains invalid items.");
 
@@ -134,10 +208,11 @@ public class CheckoutService : ICheckoutService
                 CustomerId = customerId,
                 VendorId = vendorSplit.VendorId,
                 ShippingAddressId = address.Id,
-                Subtotal = vendorSplit.Subtotal,
+                Subtotal = vendorSplit.Subtotal - vendorSplit.DiscountTotal,
+                DiscountTotal = vendorSplit.DiscountTotal,
                 ShippingFee = vendorSplit.OrderTotal - vendorSplit.Subtotal,
                 TaxTotal = 0,
-                OrderTotal = vendorSplit.OrderTotal,
+                OrderTotal = vendorSplit.OrderTotalAfterDiscount,
                 Currency = vendorSplit.Currency,
                 Status = OrderStatus.Pending
             };
@@ -200,7 +275,7 @@ public class CheckoutService : ICheckoutService
 
         await _db.SaveChangesAsync(ct);
 
-        var totalAmount = split.Sum(s => s.OrderTotal);
+        var totalAmount = split.Sum(s => s.OrderTotalAfterDiscount);
         var paymentSessionId = await _cashfree.CreatePaymentSessionAsync(totalAmount, "INR", customer.Email, ct);
 
         await tx.CommitAsync(ct);
