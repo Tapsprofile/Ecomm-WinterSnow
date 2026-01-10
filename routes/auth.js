@@ -1,0 +1,85 @@
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const dataStore = require('../models/dataStore');
+
+// Register
+router.post('/register', async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
+
+    // Check if user exists
+    const existingUser = dataStore.getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = dataStore.createUser({
+      email,
+      password: hashedPassword,
+      name
+    });
+
+    // Generate token
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || 'your_jwt_secret_key_here',
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+// Login
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user
+    const user = dataStore.getUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check password
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || 'your_jwt_secret_key_here',
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+module.exports = router;
