@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WinterSnow.Core.Domain.Catalog;
 using WinterSnow.Core.Domain.Customers;
+using WinterSnow.Core.Domain.Payments.Providers;
 using WinterSnow.Core.Domain.Reviews;
 using WinterSnow.Data;
 using WinterSnow.Services.Iam;
@@ -44,6 +45,19 @@ public class DatabaseBootstrapper
         };
 
         _db.Vendors.AddRange(vendor1, vendor2);
+        await _db.SaveChangesAsync(ct);
+
+        // Payment providers (multi-gateway)
+        var cashfree = new PaymentProvider { SystemName = "cashfree", DisplayName = "Cashfree", IsActive = true };
+        var razorpay = new PaymentProvider { SystemName = "razorpay", DisplayName = "Razorpay", IsActive = true };
+        _db.PaymentProviders.AddRange(cashfree, razorpay);
+        await _db.SaveChangesAsync(ct);
+
+        // Vendor routing: vendor1 -> cashfree, vendor2 -> razorpay (demo)
+        _db.VendorPaymentProviders.AddRange(
+            new VendorPaymentProvider { VendorId = vendor1.Id, PaymentProviderId = cashfree.Id, IsActive = true, Priority = 0 },
+            new VendorPaymentProvider { VendorId = vendor2.Id, PaymentProviderId = razorpay.Id, IsActive = true, Priority = 0 }
+        );
         await _db.SaveChangesAsync(ct);
 
         var customerUser = new AppUser

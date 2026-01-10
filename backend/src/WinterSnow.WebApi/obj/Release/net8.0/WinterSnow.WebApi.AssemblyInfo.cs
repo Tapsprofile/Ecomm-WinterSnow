@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WinterSnow.WebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+367e2748f010af03a90e6e23c7f0104f37bafb3e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96c1941be4e38f8988a932c89756ee5a0793a11b")]
 [assembly: System.Reflection.AssemblyProductAttribute("WinterSnow.WebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WinterSnow.WebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

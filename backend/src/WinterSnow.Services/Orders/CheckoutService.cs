@@ -6,6 +6,7 @@ using WinterSnow.Core.Domain.Customers;
 using WinterSnow.Core.Domain.Marketing;
 using WinterSnow.Data;
 using WinterSnow.Services.Payments;
+using WinterSnow.Services.Payments.Providers;
 
 namespace WinterSnow.Services.Orders;
 
@@ -13,16 +14,19 @@ public class CheckoutService : ICheckoutService
 {
     private readonly WinterSnowDbContext _db;
     private readonly IAddressValidationService _addressValidation;
-    private readonly ICashfreeGateway _cashfree;
+    private readonly IPaymentRoutingService _routing;
+    private readonly IPaymentGatewayRegistry _gateways;
 
     public CheckoutService(
         WinterSnowDbContext db,
         IAddressValidationService addressValidation,
-        ICashfreeGateway cashfree)
+        IPaymentRoutingService routing,
+        IPaymentGatewayRegistry gateways)
     {
         _db = db;
         _addressValidation = addressValidation;
-        _cashfree = cashfree;
+        _routing = routing;
+        _gateways = gateways;
     }
 
     public async Task<List<SplitOrderSummary>> PreviewSplitAsync(List<CheckoutItem> items, CancellationToken ct = default)
@@ -183,6 +187,7 @@ public class CheckoutService : ICheckoutService
         }
 
         await using var tx = await _db.Database.BeginTransactionAsync(ct);
+        var paymentGroupId = Guid.NewGuid();
 
         var address = new Address
         {
@@ -203,6 +208,8 @@ public class CheckoutService : ICheckoutService
         // Create one order per vendor (OOM split-order logic)
         foreach (var vendorSplit in split)
         {
+            var provider = await _routing.GetProviderForVendorAsync(vendorSplit.VendorId, ct);
+
             var order = new Order
             {
                 CustomerId = customerId,
@@ -266,7 +273,11 @@ public class CheckoutService : ICheckoutService
             _db.PaymentTransactions.Add(new PaymentTransaction
             {
                 OrderId = order.Id,
-                Provider = "Cashfree",
+                PaymentGroupId = paymentGroupId,
+                VendorId = order.VendorId,
+                PaymentProviderId = provider.Id,
+                PaymentProviderSystemName = provider.SystemName,
+                PaymentProviderDisplayName = provider.DisplayName,
                 Status = PaymentStatus.Pending,
                 Amount = order.OrderTotal,
                 Currency = order.Currency
@@ -275,16 +286,48 @@ public class CheckoutService : ICheckoutService
 
         await _db.SaveChangesAsync(ct);
 
-        var totalAmount = split.Sum(s => s.OrderTotalAfterDiscount);
-        var paymentSessionId = await _cashfree.CreatePaymentSessionAsync(totalAmount, "INR", customer.Email, ct);
+        var txns = await _db.PaymentTransactions
+            .Where(p => p.PaymentGroupId == paymentGroupId)
+            .ToListAsync(ct);
+
+        var sessions = new List<PaymentSessionInfo>();
+        foreach (var grp in txns.GroupBy(t => t.PaymentProviderSystemName, StringComparer.OrdinalIgnoreCase))
+        {
+            var systemName = grp.Key;
+            var gateway = _gateways.GetRequired(systemName);
+            var amount = grp.Sum(x => x.Amount);
+            var currency = grp.First().Currency;
+
+            var session = await gateway.CreatePaymentSessionAsync(new PaymentSessionRequest
+            {
+                CustomerEmail = customer.Email,
+                Amount = amount,
+                Currency = currency
+            }, ct);
+
+            foreach (var t in grp)
+                t.ProviderPaymentSessionId = session.SessionId;
+
+            sessions.Add(new PaymentSessionInfo
+            {
+                ProviderSystemName = session.ProviderSystemName,
+                ProviderDisplayName = session.ProviderDisplayName,
+                SessionId = session.SessionId,
+                OrderIds = grp.Select(x => x.OrderId).ToList()
+            });
+        }
+
+        await _db.SaveChangesAsync(ct);
 
         await tx.CommitAsync(ct);
 
+        var single = sessions.Count == 1 ? sessions[0].SessionId : null;
         return new CheckoutResult
         {
             CreatedOrderIds = createdOrderIds,
             SplitSummary = split,
-            PaymentSessionId = paymentSessionId
+            PaymentSessionId = single,
+            PaymentSessions = sessions
         };
     }
 }

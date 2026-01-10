@@ -8,6 +8,7 @@ using WinterSnow.Services.Discovery;
 using WinterSnow.Services.Iam;
 using WinterSnow.Services.Orders;
 using WinterSnow.Services.Payments;
+using WinterSnow.Services.Payments.Providers;
 using WinterSnow.Services.Returns;
 using WinterSnow.Services.System;
 using WinterSnow.Services.Vendor;
@@ -35,7 +36,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISearchService, SearchService>();
 
         services.AddScoped<IAddressValidationService, AddressValidationService>();
-        services.AddScoped<ICashfreeGateway, FakeCashfreeGateway>();
+        // Multi-gateway payments (stubs)
+        services.AddSingleton<IPaymentGateway, CashfreeGatewayStub>();
+        services.AddSingleton<IPaymentGateway, RazorpayGatewayStub>();
+        services.AddSingleton<IPaymentGatewayRegistry, PaymentGatewayRegistry>();
+        services.AddScoped<IPaymentRoutingService, PaymentRoutingService>();
+        services.AddScoped<IPaymentAdminService, PaymentAdminService>();
+
         services.AddScoped<ICheckoutService, CheckoutService>();
 
         services.AddScoped<IVendorDashboardService, VendorDashboardService>();

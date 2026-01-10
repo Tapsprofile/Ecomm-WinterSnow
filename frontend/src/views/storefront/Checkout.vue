@@ -26,6 +26,7 @@ const address = ref({
 const addressValidation = ref(null)
 const splitPreview = ref([])
 const paymentSessionId = ref(null)
+const paymentSessions = ref([])
 const couponCode = ref('')
 
 const checkoutItems = computed(() =>
@@ -39,6 +40,7 @@ watch(
     addressValidation.value = null
     splitPreview.value = []
     paymentSessionId.value = null
+    paymentSessions.value = []
   },
   { deep: true }
 )
@@ -84,6 +86,7 @@ async function submitPayment() {
       couponCode: couponCode.value || null
     })
     paymentSessionId.value = res.paymentSessionId
+    paymentSessions.value = res.paymentSessions || []
   } catch (e) {
     error.value = e?.message || 'Checkout submit failed'
   } finally {
@@ -235,9 +238,20 @@ async function submitPayment() {
               {{ loading ? 'Creating session…' : 'Pay with Cashfree' }}
             </button>
 
-            <div v-if="paymentSessionId" class="alert alert-success mt-3 mb-0" role="alert">
-              <div><b>Cashfree Payment Session:</b> {{ paymentSessionId }}</div>
-              <div class="small mt-1">Integrate Cashfree Checkout modal in this step using the session id.</div>
+            <div v-if="paymentSessions.length" class="alert alert-success mt-3 mb-0" role="alert">
+              <div class="fw-bold mb-2">Payment sessions created</div>
+              <ul class="mb-0">
+                <li v-for="s in paymentSessions" :key="s.sessionId">
+                  <b>{{ s.providerDisplayName }}</b> ({{ s.providerSystemName }}): {{ s.sessionId }}
+                  <span class="text-secondary small"> • Orders: {{ (s.orderIds || []).join(', ') }}</span>
+                </li>
+              </ul>
+              <div class="small mt-2">
+                Launch the appropriate gateway modal using its session id. (Stub sessions right now.)
+              </div>
+            </div>
+            <div v-else-if="paymentSessionId" class="alert alert-success mt-3 mb-0" role="alert">
+              <div><b>Payment Session:</b> {{ paymentSessionId }}</div>
             </div>
           </div>
         </div>

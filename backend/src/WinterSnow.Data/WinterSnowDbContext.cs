@@ -3,6 +3,7 @@ using WinterSnow.Core.Domain.Catalog;
 using WinterSnow.Core.Domain.Customers;
 using WinterSnow.Core.Domain.Orders;
 using WinterSnow.Core.Domain.Payments;
+using WinterSnow.Core.Domain.Payments.Providers;
 using WinterSnow.Core.Domain.Reviews;
 using WinterSnow.Core.Domain.Marketing;
 using WinterSnow.Core.Domain.Configuration;
@@ -35,6 +36,8 @@ public class WinterSnowDbContext : DbContext
     public DbSet<ReviewMedia> ReviewMedia => Set<ReviewMedia>();
 
     public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
+    public DbSet<PaymentProvider> PaymentProviders => Set<PaymentProvider>();
+    public DbSet<VendorPaymentProvider> VendorPaymentProviders => Set<VendorPaymentProvider>();
     public DbSet<VendorLedgerEntry> VendorLedgerEntries => Set<VendorLedgerEntry>();
     public DbSet<VendorPayout> VendorPayouts => Set<VendorPayout>();
 
@@ -78,6 +81,27 @@ public class WinterSnowDbContext : DbContext
             b.HasIndex(x => x.CustomerId);
             b.HasIndex(x => x.VendorId);
             b.HasIndex(x => x.CreatedOnUtc);
+        });
+
+        modelBuilder.Entity<PaymentProvider>(b =>
+        {
+            b.HasIndex(x => x.SystemName).IsUnique();
+        });
+
+        modelBuilder.Entity<VendorPaymentProvider>(b =>
+        {
+            b.HasIndex(x => new { x.VendorId, x.PaymentProviderId }).IsUnique();
+        });
+
+        modelBuilder.Entity<PaymentTransaction>(b =>
+        {
+            b.HasIndex(x => x.PaymentGroupId);
+            b.HasIndex(x => x.OrderId);
+            b.HasIndex(x => x.VendorId);
+            b.HasIndex(x => x.PaymentProviderId);
+            b.HasIndex(x => x.PaymentProviderSystemName);
+            b.HasIndex(x => x.ProviderOrderId);
+            b.HasIndex(x => x.ProviderPaymentId);
         });
     }
 }

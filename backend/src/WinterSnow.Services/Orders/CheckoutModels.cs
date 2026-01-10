@@ -64,8 +64,18 @@ public class CheckoutResult
     public List<SplitOrderSummary> SplitSummary { get; set; } = [];
 
     /// <summary>
-    /// Payment session for Cashfree modal (stubbed).
+    /// Backward compatibility: if only one provider session was created, it is mirrored here.
     /// </summary>
     public string? PaymentSessionId { get; set; }
+
+    public List<PaymentSessionInfo> PaymentSessions { get; set; } = [];
+}
+
+public class PaymentSessionInfo
+{
+    public required string ProviderSystemName { get; set; }
+    public required string ProviderDisplayName { get; set; }
+    public required string SessionId { get; set; }
+    public List<int> OrderIds { get; set; } = [];
 }
 
