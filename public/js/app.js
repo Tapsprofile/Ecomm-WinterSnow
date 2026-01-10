@@ -91,7 +91,7 @@ async function displayProducts() {
                 </div>
                 <button 
                     class="btn" 
-                    onclick="handleAddToCart(${product.id})"
+                    onclick="handleAddToCart(${product.id}, event)"
                     ${product.stock === 0 ? 'disabled' : ''}
                 >
                     ${product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
@@ -102,20 +102,22 @@ async function displayProducts() {
 }
 
 // Handle add to cart
-async function handleAddToCart(productId) {
+async function handleAddToCart(productId, event) {
     await addToCart(productId, 1);
     await updateCartCount();
     
     // Show feedback
-    const button = event.target;
-    const originalText = button.textContent;
-    button.textContent = 'Added!';
-    button.style.background = '#51cf66';
-    
-    setTimeout(() => {
-        button.textContent = originalText;
-        button.style.background = '';
-    }, 1500);
+    if (event && event.target) {
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Added!';
+        button.style.background = '#51cf66';
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.style.background = '';
+        }, 1500);
+    }
 }
 
 // Initialize page
