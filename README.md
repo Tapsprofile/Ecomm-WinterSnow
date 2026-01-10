@@ -52,3 +52,7 @@ Frontend expects the API at `VITE_API_BASE_URL` (default in `.env.example` is `h
 
 - **Product**: `Senior Software Developer`
 - **Slug**: `senior-software-developer`
+
+## Documentation
+
+- `docs/WinterSnow-Product-Documentation.md`
