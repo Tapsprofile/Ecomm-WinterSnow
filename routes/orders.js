@@ -12,9 +12,25 @@ router.post('/', (req, res) => {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
-    // Calculate total
+    // Calculate total and validate stock
     let total = 0;
-    const items = cart.map(item => {
+    const items = [];
+    
+    // First, validate all stock
+    for (const item of cart) {
+      const product = dataStore.getProductById(item.productId);
+      if (!product) {
+        return res.status(400).json({ error: `Product ${item.productId} not found` });
+      }
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ 
+          error: `Insufficient stock for ${product.name}. Available: ${product.stock}, Requested: ${item.quantity}` 
+        });
+      }
+    }
+    
+    // If all stock is available, process the order
+    for (const item of cart) {
       const product = dataStore.getProductById(item.productId);
       const itemTotal = product.price * item.quantity;
       total += itemTotal;
@@ -22,14 +38,14 @@ router.post('/', (req, res) => {
       // Update stock
       dataStore.updateProductStock(item.productId, item.quantity);
       
-      return {
+      items.push({
         productId: item.productId,
         productName: product.name,
         quantity: item.quantity,
         price: product.price,
         total: itemTotal
-      };
-    });
+      });
+    }
 
     const order = dataStore.createOrder({
       customer,
