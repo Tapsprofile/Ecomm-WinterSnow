@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinterSnow.Core", "WinterSnow.Core\WinterSnow.Core.csproj", "{26472A75-3A71-4012-A86E-7163AC8A9725}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinterSnow.Data", "WinterSnow.Data\WinterSnow.Data.csproj", "{17E216C3-7010-4060-9BC4-D50CAA059231}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinterSnow.Services", "WinterSnow.Services\WinterSnow.Services.csproj", "{4BD606D2-8A39-4EF9-A459-53D02460222C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinterSnow.WebApi", "WinterSnow.WebApi\WinterSnow.WebApi.csproj", "{F5EB465C-3197-4780-BA78-1A7090D13862}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{26472A75-3A71-4012-A86E-7163AC8A9725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26472A75-3A71-4012-A86E-7163AC8A9725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26472A75-3A71-4012-A86E-7163AC8A9725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26472A75-3A71-4012-A86E-7163AC8A9725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17E216C3-7010-4060-9BC4-D50CAA059231}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17E216C3-7010-4060-9BC4-D50CAA059231}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17E216C3-7010-4060-9BC4-D50CAA059231}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17E216C3-7010-4060-9BC4-D50CAA059231}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BD606D2-8A39-4EF9-A459-53D02460222C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BD606D2-8A39-4EF9-A459-53D02460222C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BD606D2-8A39-4EF9-A459-53D02460222C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BD606D2-8A39-4EF9-A459-53D02460222C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5EB465C-3197-4780-BA78-1A7090D13862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5EB465C-3197-4780-BA78-1A7090D13862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5EB465C-3197-4780-BA78-1A7090D13862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5EB465C-3197-4780-BA78-1A7090D13862}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

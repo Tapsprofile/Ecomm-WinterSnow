@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "C7QVFYJO0KJXjDABXZXZMDMG+r4IWcPWMv4pOlJ3UT4=",
+  "Source": "WinterSnow.WebApi",
+  "BasePath": "_content/WinterSnow.WebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
