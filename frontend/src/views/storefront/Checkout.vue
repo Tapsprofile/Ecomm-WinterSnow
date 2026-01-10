@@ -94,36 +94,39 @@ async function submitPayment() {
 
 <template>
   <TopNav />
-  <div class="container">
-    <div class="card" style="margin-top:16px;">
-      <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+  <div class="container py-3">
+    <div class="card">
+      <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
-          <div class="pill">3-step checkout</div>
-          <h2 style="margin:8px 0 0;">Checkout</h2>
+          <span class="badge text-bg-secondary">3-step checkout</span>
+          <h2 class="h4 mt-2 mb-0">Checkout</h2>
         </div>
-        <div class="pill">Step {{ step }}/3</div>
+        <span class="badge text-bg-secondary">Step {{ step }}/3</span>
       </div>
     </div>
 
-    <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+    <div v-if="error" class="alert alert-danger mt-3" role="alert">
       <b>Error:</b> {{ error }}
     </div>
 
-    <div class="row" style="align-items:flex-start; margin-top:12px;">
-      <div class="col">
+    <div class="row g-3 align-items-start mt-1">
+      <div class="col-12 col-lg-6">
         <div class="card">
-          <div style="font-weight:900; margin-bottom:10px;">Cart</div>
-          <div v-if="!cart.items.length" class="muted">Cart is empty.</div>
-          <div v-else style="display:flex; flex-direction:column; gap:10px;">
-            <div v-for="i in cart.items" :key="`${i.productId}:${i.variantId}`" class="card" style="background:#f8fafc;">
-              <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-                <div>
-                  <b>{{ i.name || `Product ${i.productId}` }}</b>
-                  <div class="muted" style="font-size:12px;">Variant: {{ i.variantId ?? 'default' }}</div>
-                </div>
-                <div style="display:flex; gap:8px; align-items:center;">
-                  <input class="input" style="width:90px;" type="number" min="1" v-model.number="i.quantity" />
-                  <button class="btn danger" @click="cart.removeItem(i.productId, i.variantId)">Remove</button>
+          <div class="card-body">
+            <div class="fw-bold mb-2">Cart</div>
+            <div v-if="!cart.items.length" class="text-secondary">Cart is empty.</div>
+
+            <div v-else class="d-flex flex-column gap-2">
+              <div v-for="i in cart.items" :key="`${i.productId}:${i.variantId}`" class="card">
+                <div class="card-body d-flex justify-content-between gap-3 align-items-center flex-wrap">
+                  <div>
+                    <b>{{ i.name || `Product ${i.productId}` }}</b>
+                    <div class="text-secondary small">Variant: {{ i.variantId ?? 'default' }}</div>
+                  </div>
+                  <div class="d-flex gap-2 align-items-center">
+                    <input class="form-control form-control-sm" style="width: 90px;" type="number" min="1" v-model.number="i.quantity" />
+                    <button class="btn btn-outline-danger btn-sm" type="button" @click="cart.removeItem(i.productId, i.variantId)">Remove</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -131,98 +134,111 @@ async function submitPayment() {
         </div>
       </div>
 
-      <div class="col">
+      <div class="col-12 col-lg-6">
         <div v-if="step === 1" class="card">
-          <div style="font-weight:900; margin-bottom:10px;">1) Shipping Address (with validation)</div>
-          <div class="row">
-            <label class="col">
-              <div class="muted" style="font-size:12px; margin-bottom:6px;">Full name</div>
-              <input class="input" v-model="address.fullName" />
-            </label>
-            <label class="col">
-              <div class="muted" style="font-size:12px; margin-bottom:6px;">Phone</div>
-              <input class="input" v-model="address.phone" />
-            </label>
-          </div>
-          <label style="display:block; margin-top:10px;">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Address line 1</div>
-            <input class="input" v-model="address.line1" />
-          </label>
-          <label style="display:block; margin-top:10px;">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Address line 2</div>
-            <input class="input" v-model="address.line2" />
-          </label>
-          <div class="row" style="margin-top:10px;">
-            <label class="col">
-              <div class="muted" style="font-size:12px; margin-bottom:6px;">City</div>
-              <input class="input" v-model="address.city" />
-            </label>
-            <label class="col">
-              <div class="muted" style="font-size:12px; margin-bottom:6px;">State</div>
-              <input class="input" v-model="address.state" />
-            </label>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <label class="col">
-              <div class="muted" style="font-size:12px; margin-bottom:6px;">Postal code</div>
-              <input class="input" v-model="address.postalCode" />
-            </label>
-            <label class="col">
-              <div class="muted" style="font-size:12px; margin-bottom:6px;">Country</div>
-              <input class="input" v-model="address.countryCode" />
-            </label>
-          </div>
+          <div class="card-body">
+            <div class="fw-bold mb-3">1) Shipping Address (with validation)</div>
 
-          <button class="btn primary" style="margin-top:12px; width:100%;" :disabled="loading || !cart.items.length" @click="validateAddress">
-            {{ loading ? 'Validating…' : 'Continue to Order Summary' }}
-          </button>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label small text-secondary">Full name</label>
+                <input class="form-control" v-model="address.fullName" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small text-secondary">Phone</label>
+                <input class="form-control" v-model="address.phone" />
+              </div>
+            </div>
 
-          <div v-if="addressValidation?.isValid" class="card" style="margin-top:10px; background:#ecfeff; border-color:#a5f3fc;">
-            Address validated.
+            <div class="mt-2">
+              <label class="form-label small text-secondary">Address line 1</label>
+              <input class="form-control" v-model="address.line1" />
+            </div>
+            <div class="mt-2">
+              <label class="form-label small text-secondary">Address line 2</label>
+              <input class="form-control" v-model="address.line2" />
+            </div>
+
+            <div class="row g-2 mt-1">
+              <div class="col-6">
+                <label class="form-label small text-secondary">City</label>
+                <input class="form-control" v-model="address.city" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small text-secondary">State</label>
+                <input class="form-control" v-model="address.state" />
+              </div>
+            </div>
+            <div class="row g-2 mt-1">
+              <div class="col-6">
+                <label class="form-label small text-secondary">Postal code</label>
+                <input class="form-control" v-model="address.postalCode" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small text-secondary">Country</label>
+                <input class="form-control" v-model="address.countryCode" />
+              </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3" type="button" :disabled="loading || !cart.items.length" @click="validateAddress">
+              {{ loading ? 'Validating…' : 'Continue to Order Summary' }}
+            </button>
+
+            <div v-if="addressValidation?.isValid" class="alert alert-success mt-3 mb-0" role="alert">
+              Address validated.
+            </div>
           </div>
         </div>
 
         <div v-else-if="step === 2" class="card">
-          <div style="font-weight:900; margin-bottom:10px;">2) Order Summary (split by vendor)</div>
-          <div class="muted">This step previews how a single cart becomes multiple vendor orders.</div>
-          <label style="display:block; margin-top:12px;">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Coupon code (optional)</div>
-            <input class="input" v-model="couponCode" placeholder="WINTER10" />
-          </label>
-          <button class="btn primary" style="margin-top:12px; width:100%;" :disabled="loading" @click="loadPreview">
-            {{ loading ? 'Loading…' : 'Load Summary' }}
-          </button>
+          <div class="card-body">
+            <div class="fw-bold mb-2">2) Order Summary (split by vendor)</div>
+            <div class="text-secondary small">This previews how a single cart becomes multiple vendor orders.</div>
+
+            <div class="mt-3">
+              <label class="form-label small text-secondary">Coupon code (optional)</label>
+              <input class="form-control" v-model="couponCode" placeholder="WINTER10" />
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3" type="button" :disabled="loading" @click="loadPreview">
+              {{ loading ? 'Loading…' : 'Load Summary' }}
+            </button>
+          </div>
         </div>
 
         <div v-else class="card">
-          <div style="font-weight:900; margin-bottom:10px;">3) Secure Payment (Cashfree modal stub)</div>
+          <div class="card-body">
+            <div class="fw-bold mb-3">3) Secure Payment (Cashfree modal stub)</div>
 
-          <div v-if="splitPreview.length" style="display:flex; flex-direction:column; gap:10px;">
-            <div v-for="s in splitPreview" :key="s.vendorId" class="card" style="background:#f8fafc;">
-              <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-                <b>Vendor #{{ s.vendorId }}</b>
-                <span class="pill">{{ s.currency }} {{ s.orderTotalAfterDiscount ?? s.orderTotal }}</span>
+            <div v-if="splitPreview.length" class="d-flex flex-column gap-2">
+              <div v-for="s in splitPreview" :key="s.vendorId" class="card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                    <b>Vendor #{{ s.vendorId }}</b>
+                    <span class="badge text-bg-secondary">{{ s.currency }} {{ s.orderTotalAfterDiscount ?? s.orderTotal }}</span>
+                  </div>
+                  <div class="text-secondary small mt-2">
+                    Subtotal {{ s.subtotal }}
+                    + shipping {{ (s.orderTotal - s.subtotal).toFixed(2) }}
+                    <span v-if="s.discountTotal"> - discount {{ s.discountTotal }}</span>
+                  </div>
+                  <ul class="mt-2 mb-0">
+                    <li v-for="it in s.items" :key="it.productId">
+                      {{ it.productName || `Product ${it.productId}` }} × {{ it.quantity }} ({{ it.unitPrice }})
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div class="muted" style="font-size:12px; margin-top:6px;">
-                Subtotal {{ s.subtotal }}
-                + shipping {{ (s.orderTotal - s.subtotal).toFixed(2) }}
-                <span v-if="s.discountTotal"> - discount {{ s.discountTotal }}</span>
-              </div>
-              <ul style="margin:10px 0 0; padding-left:18px;">
-                <li v-for="it in s.items" :key="it.productId">
-                  {{ it.productName || `Product ${it.productId}` }} × {{ it.quantity }} ({{ it.unitPrice }})
-                </li>
-              </ul>
             </div>
-          </div>
 
-          <button class="btn primary" style="margin-top:12px; width:100%;" :disabled="loading || !cart.items.length" @click="submitPayment">
-            {{ loading ? 'Creating session…' : 'Pay with Cashfree' }}
-          </button>
+            <button class="btn btn-primary w-100 mt-3" type="button" :disabled="loading || !cart.items.length" @click="submitPayment">
+              {{ loading ? 'Creating session…' : 'Pay with Cashfree' }}
+            </button>
 
-          <div v-if="paymentSessionId" class="card" style="margin-top:10px; background:#f0fdf4; border-color:#86efac;">
-            <div><b>Cashfree Payment Session:</b> {{ paymentSessionId }}</div>
-            <div class="muted" style="margin-top:6px;">Integrate Cashfree Checkout modal in this step using the session id.</div>
+            <div v-if="paymentSessionId" class="alert alert-success mt-3 mb-0" role="alert">
+              <div><b>Cashfree Payment Session:</b> {{ paymentSessionId }}</div>
+              <div class="small mt-1">Integrate Cashfree Checkout modal in this step using the session id.</div>
+            </div>
           </div>
         </div>
       </div>

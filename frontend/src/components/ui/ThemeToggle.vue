@@ -5,8 +5,9 @@ const theme = useThemeStore()
 </script>
 
 <template>
-  <button class="btn" type="button" @click="theme.toggle()">
-    Theme: {{ theme.mode }} ({{ theme.roleKey }})
+  <button class="btn btn-outline-secondary btn-sm" type="button" @click="theme.toggle()">
+    <i class="bi bi-circle-half me-1" />
+    {{ theme.mode }}
   </button>
 </template>
 

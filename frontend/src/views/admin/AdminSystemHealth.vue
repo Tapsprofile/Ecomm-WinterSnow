@@ -20,35 +20,49 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+  <div v-if="error" class="alert alert-danger mt-3" role="alert">
     <b>Error:</b> {{ error }}
   </div>
-  <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+  <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="row" style="margin-top:12px;">
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Status</div>
-      <div style="font-size:22px; font-weight:900; margin-top:6px;">{{ data.status }}</div>
+  <div v-if="!loading" class="row g-3 mt-1">
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Status</div>
+          <div class="h5 fw-bold mt-1 mb-0">{{ data.status }}</div>
+        </div>
+      </div>
     </div>
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Uptime</div>
-      <div style="font-size:22px; font-weight:900; margin-top:6px;">{{ Math.round(data.uptimeSeconds) }}s</div>
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Uptime</div>
+          <div class="h5 fw-bold mt-1 mb-0">{{ Math.round(data.uptimeSeconds) }}s</div>
+        </div>
+      </div>
     </div>
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">API latency</div>
-      <div style="font-size:14px; margin-top:6px;">
-        <span class="pill">p50 {{ data.apiResponseP50Ms.toFixed(1) }}ms</span>
-        <span class="pill" style="margin-left:6px;">p95 {{ data.apiResponseP95Ms.toFixed(1) }}ms</span>
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">API latency</div>
+          <div class="mt-2 d-flex gap-2 flex-wrap">
+            <span class="badge text-bg-secondary">p50 {{ data.apiResponseP50Ms.toFixed(1) }}ms</span>
+            <span class="badge text-bg-secondary">p95 {{ data.apiResponseP95Ms.toFixed(1) }}ms</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div v-if="!loading" class="card" style="margin-top:12px;">
-    <div style="font-weight:900;">Recent errors (from .NET middleware)</div>
-    <div v-if="!data.recentErrors?.length" class="muted" style="margin-top:10px;">No errors captured.</div>
-    <ul v-else style="margin-top:10px;">
-      <li v-for="e in data.recentErrors" :key="e" class="muted" style="margin-bottom:6px;">{{ e }}</li>
-    </ul>
+  <div v-if="!loading" class="card mt-3">
+    <div class="card-body">
+      <div class="fw-bold">Recent errors (from .NET middleware)</div>
+      <div v-if="!data.recentErrors?.length" class="text-secondary mt-2">No errors captured.</div>
+      <ul v-else class="mt-2 mb-0">
+        <li v-for="e in data.recentErrors" :key="e" class="text-secondary small">{{ e }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 

@@ -75,138 +75,152 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="card" style="margin-top:12px;">
-    <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap;">
+  <div class="card mt-3">
+    <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
       <div>
-        <div style="font-weight:900;">Create Product Listing</div>
-        <div class="muted">Add inventory, pricing, discounts, coupon-eligibility, variants, and media.</div>
+        <div class="fw-bold">Create Product Listing</div>
+        <div class="text-secondary small">Add inventory, pricing, discounts, coupon eligibility, variants, and media.</div>
       </div>
-      <RouterLink class="btn" to="/vendor/inventory">Back to inventory</RouterLink>
+      <RouterLink class="btn btn-outline-secondary btn-sm" to="/vendor/inventory">Back to inventory</RouterLink>
     </div>
   </div>
 
-  <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+  <div v-if="error" class="alert alert-danger mt-3" role="alert">
     <b>Error:</b> {{ error }}
   </div>
-  <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+  <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="row" style="margin-top:12px; align-items:flex-start;">
-    <div class="col card">
-      <div style="font-weight:900; margin-bottom:10px;">Listing details</div>
-      <label style="display:block; margin-bottom:10px;">
-        <div class="muted" style="font-size:12px; margin-bottom:6px;">Name</div>
-        <input class="input" v-model="form.name" @blur="form.slug = form.slug || slugify(form.name)" />
-      </label>
-      <label style="display:block; margin-bottom:10px;">
-        <div class="muted" style="font-size:12px; margin-bottom:6px;">Slug</div>
-        <input class="input" v-model="form.slug" placeholder="e.g. thermal-gloves" />
-      </label>
-      <label style="display:block; margin-bottom:10px;">
-        <div class="muted" style="font-size:12px; margin-bottom:6px;">Short description</div>
-        <input class="input" v-model="form.shortDescription" />
-      </label>
-      <label style="display:block; margin-bottom:10px;">
-        <div class="muted" style="font-size:12px; margin-bottom:6px;">Full description / specs</div>
-        <textarea class="textarea" v-model="form.fullDescription" />
-      </label>
+  <div v-if="!loading" class="row g-3 mt-1 align-items-start">
+    <div class="col-12 col-lg-5">
+      <div class="card">
+        <div class="card-body">
+          <div class="fw-bold mb-3">Listing details</div>
 
-      <div class="row">
-        <label class="col">
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Material</div>
-          <input class="input" v-model="form.material" placeholder="Fleece, Polyester…" />
-        </label>
-        <label class="col">
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Category</div>
-          <select class="select" v-model="form.categoryId">
-            <option :value="null">Uncategorized</option>
-            <optgroup v-for="r in rootCats" :key="r.categoryId" :label="r.name">
-              <option v-for="c in childCats.filter((x) => x.parentCategoryId === r.categoryId)" :key="c.categoryId" :value="c.categoryId">
-                {{ c.name }}
-              </option>
-            </optgroup>
-          </select>
-        </label>
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input class="form-control" v-model="form.name" @blur="form.slug = form.slug || slugify(form.name)" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Slug</label>
+            <input class="form-control" v-model="form.slug" placeholder="e.g. thermal-gloves" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Short description</label>
+            <input class="form-control" v-model="form.shortDescription" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Full description / specs</label>
+            <textarea class="form-control" rows="5" v-model="form.fullDescription" />
+          </div>
+
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label">Material</label>
+              <input class="form-control" v-model="form.material" placeholder="Fleece, Polyester…" />
+            </div>
+            <div class="col-6">
+              <label class="form-label">Category</label>
+              <select class="form-select" v-model="form.categoryId">
+                <option :value="null">Uncategorized</option>
+                <optgroup v-for="r in rootCats" :key="r.categoryId" :label="r.name">
+                  <option v-for="c in childCats.filter((x) => x.parentCategoryId === r.categoryId)" :key="c.categoryId" :value="c.categoryId">
+                    {{ c.name }}
+                  </option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="col">
+    <div class="col-12 col-lg-7">
       <div class="card">
-        <div style="font-weight:900; margin-bottom:10px;">Pricing, discounts, coupons</div>
-        <div class="row">
-          <label class="col">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Base price (INR)</div>
-            <input class="input" type="number" min="0" v-model.number="form.price" />
-          </label>
-          <label class="col" style="display:flex; align-items:flex-end;">
-            <label style="display:flex; gap:8px; align-items:center;">
-              <input type="checkbox" v-model="form.allowCoupons" />
-              Allow coupons
-            </label>
-          </label>
-        </div>
-
-        <div class="row" style="margin-top:10px;">
-          <label class="col">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Discount %</div>
-            <input class="input" type="number" min="0" max="100" v-model.number="form.discountPercent" />
-          </label>
-          <label class="col">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Discount start (UTC)</div>
-            <input class="input" v-model="form.discountStartUtc" placeholder="2026-01-10T00:00:00Z" />
-          </label>
-          <label class="col">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Discount end (UTC)</div>
-            <input class="input" v-model="form.discountEndUtc" placeholder="2026-01-17T00:00:00Z" />
-          </label>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px;">
-        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-          <div style="font-weight:900;">Variants (Inventory)</div>
-          <button class="btn" type="button" @click="addVariant">Add variant</button>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-          <div v-for="(v, idx) in form.variants" :key="idx" class="card" style="background:#f8fafc;">
-            <div class="row">
-              <label class="col">
-                <div class="muted" style="font-size:12px; margin-bottom:6px;">Size</div>
-                <input class="input" v-model="v.size" />
-              </label>
-              <label class="col">
-                <div class="muted" style="font-size:12px; margin-bottom:6px;">Color</div>
-                <input class="input" v-model="v.color" />
-              </label>
-              <label class="col">
-                <div class="muted" style="font-size:12px; margin-bottom:6px;">SKU</div>
-                <input class="input" v-model="v.sku" />
-              </label>
+        <div class="card-body">
+          <div class="fw-bold mb-3">Pricing, discounts, coupons</div>
+          <div class="row g-2 align-items-end">
+            <div class="col-6">
+              <label class="form-label">Base price (INR)</label>
+              <input class="form-control" type="number" min="0" v-model.number="form.price" />
             </div>
-            <div class="row" style="margin-top:10px;">
-              <label class="col">
-                <div class="muted" style="font-size:12px; margin-bottom:6px;">Override price (optional)</div>
-                <input class="input" type="number" min="0" v-model.number="v.overridePrice" />
-              </label>
-              <label class="col">
-                <div class="muted" style="font-size:12px; margin-bottom:6px;">Stock quantity</div>
-                <input class="input" type="number" min="0" v-model.number="v.stockQuantity" />
-              </label>
+            <div class="col-6">
+              <div class="form-check mt-4">
+                <input class="form-check-input" type="checkbox" id="allowCoupons" v-model="form.allowCoupons" />
+                <label class="form-check-label" for="allowCoupons">Allow coupons</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-2 mt-2">
+            <div class="col-4">
+              <label class="form-label">Discount %</label>
+              <input class="form-control" type="number" min="0" max="100" v-model.number="form.discountPercent" />
+            </div>
+            <div class="col-4">
+              <label class="form-label">Discount start (UTC)</label>
+              <input class="form-control" v-model="form.discountStartUtc" placeholder="2026-01-10T00:00:00Z" />
+            </div>
+            <div class="col-4">
+              <label class="form-label">Discount end (UTC)</label>
+              <input class="form-control" v-model="form.discountEndUtc" placeholder="2026-01-17T00:00:00Z" />
             </div>
           </div>
         </div>
       </div>
 
-      <div class="card" style="margin-top:12px;">
-        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-          <div style="font-weight:900;">Media URLs</div>
-          <button class="btn" type="button" @click="addMedia">Add media</button>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-          <input v-for="(u, idx) in form.mediaUrls" :key="idx" class="input" v-model="form.mediaUrls[idx]" placeholder="https://..." />
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="fw-bold">Variants (Inventory)</div>
+            <button class="btn btn-outline-secondary btn-sm" type="button" @click="addVariant">Add variant</button>
+          </div>
+
+          <div class="d-flex flex-column gap-2 mt-3">
+            <div v-for="(v, idx) in form.variants" :key="idx" class="card">
+              <div class="card-body">
+                <div class="row g-2">
+                  <div class="col-4">
+                    <label class="form-label small text-secondary">Size</label>
+                    <input class="form-control form-control-sm" v-model="v.size" />
+                  </div>
+                  <div class="col-4">
+                    <label class="form-label small text-secondary">Color</label>
+                    <input class="form-control form-control-sm" v-model="v.color" />
+                  </div>
+                  <div class="col-4">
+                    <label class="form-label small text-secondary">SKU</label>
+                    <input class="form-control form-control-sm" v-model="v.sku" />
+                  </div>
+                </div>
+                <div class="row g-2 mt-2">
+                  <div class="col-6">
+                    <label class="form-label small text-secondary">Override price (optional)</label>
+                    <input class="form-control form-control-sm" type="number" min="0" v-model.number="v.overridePrice" />
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small text-secondary">Stock quantity</label>
+                    <input class="form-control form-control-sm" type="number" min="0" v-model.number="v.stockQuantity" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <button class="btn primary" style="margin-top:12px; width:100%;" :disabled="saving" @click="submit">
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="fw-bold">Media URLs</div>
+            <button class="btn btn-outline-secondary btn-sm" type="button" @click="addMedia">Add media</button>
+          </div>
+          <div class="d-flex flex-column gap-2 mt-3">
+            <input v-for="(u, idx) in form.mediaUrls" :key="idx" class="form-control" v-model="form.mediaUrls[idx]" placeholder="https://..." />
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-100 mt-3" type="button" :disabled="saving" @click="submit">
         {{ saving ? 'Creating…' : 'Create listing (goes to Admin approval)' }}
       </button>
     </div>

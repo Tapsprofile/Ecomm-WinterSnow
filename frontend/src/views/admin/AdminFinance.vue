@@ -20,32 +20,46 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+  <div v-if="error" class="alert alert-danger mt-3" role="alert">
     <b>Error:</b> {{ error }}
   </div>
-  <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+  <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="row" style="margin-top:12px;">
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Platform revenue (gross)</div>
-      <div style="font-size:26px; font-weight:900; margin-top:6px;">INR {{ data.platformRevenueGross }}</div>
+  <div v-if="!loading" class="row g-3 mt-1">
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Platform revenue (gross)</div>
+          <div class="h4 fw-bold mt-1 mb-0">INR {{ data.platformRevenueGross }}</div>
+        </div>
+      </div>
     </div>
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Total commissions earned</div>
-      <div style="font-size:26px; font-weight:900; margin-top:6px;">INR {{ data.totalCommissionsEarned }}</div>
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Total commissions earned</div>
+          <div class="h4 fw-bold mt-1 mb-0">INR {{ data.totalCommissionsEarned }}</div>
+        </div>
+      </div>
     </div>
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Orders</div>
-      <div style="font-size:26px; font-weight:900; margin-top:6px;">{{ data.ordersCount }}</div>
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Orders</div>
+          <div class="h4 fw-bold mt-1 mb-0">{{ data.ordersCount }}</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div v-if="!loading" class="card" style="margin-top:12px;">
-    <div style="font-weight:900;">Bulk payouts (Cashfree API)</div>
-    <div class="muted" style="margin-top:6px;">
-      This UI is ready to trigger bulk payouts, but the backend Cashfree payout API integration is intentionally stubbed in this scaffold.
+  <div v-if="!loading" class="card mt-3">
+    <div class="card-body">
+      <div class="fw-bold">Bulk payouts (Cashfree API)</div>
+      <div class="text-secondary small mt-1">
+        This UI is ready to trigger bulk payouts, but the backend Cashfree payout API integration is intentionally stubbed in this scaffold.
+      </div>
+      <button class="btn btn-outline-secondary mt-3" disabled>Trigger bulk payouts (stub)</button>
     </div>
-    <button class="btn" style="margin-top:12px;" disabled>Trigger bulk payouts (stub)</button>
   </div>
 </template>
 

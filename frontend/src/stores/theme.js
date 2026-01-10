@@ -22,8 +22,8 @@ export const useThemeStore = defineStore('theme', () => {
   const mode = computed(() => modeByRole[roleKey.value] || 'light')
 
   function apply() {
-    document.documentElement.dataset.theme = mode.value
-    document.documentElement.dataset.role = roleKey.value
+    document.documentElement.setAttribute('data-bs-theme', mode.value)
+    document.documentElement.setAttribute('data-role', roleKey.value)
   }
 
   function setModeForRole(role, nextMode) {

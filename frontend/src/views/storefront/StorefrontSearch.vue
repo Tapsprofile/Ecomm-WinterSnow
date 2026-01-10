@@ -70,76 +70,80 @@ onMounted(load)
 
 <template>
   <TopNav />
-  <div class="container">
-    <div class="row" style="align-items:flex-start; margin-top:16px;">
-      <aside class="card" style="width:320px;">
-        <div style="font-weight:800; margin-bottom:10px;">Faceted Filtering</div>
+  <div class="container py-3">
+    <div class="row g-3 align-items-start">
+      <aside class="col-12 col-lg-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="fw-bold mb-3">Faceted Filtering</div>
 
-        <label style="display:block; margin-bottom:10px;">
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Query</div>
-          <input class="input" v-model="q" placeholder="e.g. jacket, gloves" />
-        </label>
+            <div class="mb-3">
+              <label class="form-label small text-secondary">Query</label>
+              <input class="form-control" v-model="q" placeholder="e.g. jacket, gloves" />
+            </div>
 
-        <div class="row">
-          <label class="col">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Min Price</div>
-            <input class="input" v-model="minPrice" inputmode="numeric" />
-          </label>
-          <label class="col">
-            <div class="muted" style="font-size:12px; margin-bottom:6px;">Max Price</div>
-            <input class="input" v-model="maxPrice" inputmode="numeric" />
-          </label>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label small text-secondary">Min Price</label>
+                <input class="form-control" v-model="minPrice" inputmode="numeric" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small text-secondary">Max Price</label>
+                <input class="form-control" v-model="maxPrice" inputmode="numeric" />
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <label class="form-label small text-secondary">Material</label>
+              <select class="form-select" v-model="material">
+                <option value="">All</option>
+                <option v-for="b in data.facets.materials" :key="b.value" :value="b.value">{{ b.value }} ({{ b.count }})</option>
+              </select>
+            </div>
+
+            <div class="mt-3">
+              <label class="form-label small text-secondary">Size</label>
+              <select class="form-select" v-model="size">
+                <option value="">All</option>
+                <option v-for="b in data.facets.sizes" :key="b.value" :value="b.value">{{ b.value }} ({{ b.count }})</option>
+              </select>
+            </div>
+
+            <div class="mt-3">
+              <label class="form-label small text-secondary">Color</label>
+              <select class="form-select" v-model="color">
+                <option value="">All</option>
+                <option v-for="b in data.facets.colors" :key="b.value" :value="b.value">{{ b.value }} ({{ b.count }})</option>
+              </select>
+            </div>
+
+            <button class="btn btn-outline-secondary w-100 mt-3" type="button" @click="q=''; material=''; size=''; color=''; minPrice=''; maxPrice='';">
+              Clear filters
+            </button>
+          </div>
         </div>
-
-        <label style="display:block; margin-top:10px;">
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Material</div>
-          <select class="select" v-model="material">
-            <option value="">All</option>
-            <option v-for="b in data.facets.materials" :key="b.value" :value="b.value">{{ b.value }} ({{ b.count }})</option>
-          </select>
-        </label>
-
-        <label style="display:block; margin-top:10px;">
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Size</div>
-          <select class="select" v-model="size">
-            <option value="">All</option>
-            <option v-for="b in data.facets.sizes" :key="b.value" :value="b.value">{{ b.value }} ({{ b.count }})</option>
-          </select>
-        </label>
-
-        <label style="display:block; margin-top:10px;">
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Color</div>
-          <select class="select" v-model="color">
-            <option value="">All</option>
-            <option v-for="b in data.facets.colors" :key="b.value" :value="b.value">{{ b.value }} ({{ b.count }})</option>
-          </select>
-        </label>
-
-        <button
-          class="btn"
-          style="margin-top:12px; width:100%;"
-          @click="q=''; material=''; size=''; color=''; minPrice=''; maxPrice='';"
-        >
-          Clear filters
-        </button>
       </aside>
 
-      <main class="col">
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="font-weight:800;">Results</div>
-            <div class="muted">{{ data.total }} products</div>
+      <main class="col-12 col-lg-9">
+        <div class="card">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-bold">Results</div>
+              <div class="text-secondary small">{{ data.total }} products</div>
+            </div>
+            <RouterLink to="/" class="btn btn-outline-secondary btn-sm">Back to home</RouterLink>
           </div>
-          <RouterLink to="/" class="btn">Back to home</RouterLink>
         </div>
 
-        <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+        <div v-if="error" class="alert alert-danger mt-3" role="alert">
           <b>Error:</b> {{ error }}
         </div>
-        <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+        <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-        <div v-if="!loading" class="grid" style="margin-top:12px;">
-          <ProductCard v-for="p in data.items" :key="p.productId" :item="p" />
+        <div v-if="!loading" class="row g-3 row-cols-1 row-cols-sm-2 row-cols-lg-3 mt-1">
+          <div v-for="p in data.items" :key="p.productId" class="col">
+            <ProductCard :item="p" />
+          </div>
         </div>
       </main>
     </div>

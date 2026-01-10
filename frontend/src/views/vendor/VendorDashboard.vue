@@ -20,51 +20,65 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+  <div v-if="error" class="alert alert-danger mt-3" role="alert">
     <b>Error:</b> {{ error }}
   </div>
-  <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+  <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="row" style="margin-top:12px; align-items:stretch;">
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Revenue Today</div>
-      <div style="font-size:26px; font-weight:900; margin-top:6px;">INR {{ data.revenueToday }}</div>
+  <div v-if="!loading" class="row g-3 mt-1">
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Revenue Today</div>
+          <div class="h4 fw-bold mt-1 mb-0">INR {{ data.revenueToday }}</div>
+        </div>
+      </div>
     </div>
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Revenue (7 days)</div>
-      <div style="font-size:26px; font-weight:900; margin-top:6px;">INR {{ data.revenueThisWeek }}</div>
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Revenue (7 days)</div>
+          <div class="h4 fw-bold mt-1 mb-0">INR {{ data.revenueThisWeek }}</div>
+        </div>
+      </div>
     </div>
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Average Order Value</div>
-      <div style="font-size:26px; font-weight:900; margin-top:6px;">INR {{ data.averageOrderValue }}</div>
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Average Order Value</div>
+          <div class="h4 fw-bold mt-1 mb-0">INR {{ data.averageOrderValue }}</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div v-if="!loading" class="card" style="margin-top:12px;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-weight:900;">Top Winter Products</div>
-      <span class="pill">This week</span>
-    </div>
+  <div v-if="!loading" class="card mt-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="fw-bold">Top Winter Products</div>
+        <span class="badge text-bg-secondary">This week</span>
+      </div>
 
-    <div v-if="!data.topWinterProducts.length" class="muted" style="margin-top:10px;">No sales yet.</div>
+      <div v-if="!data.topWinterProducts.length" class="text-secondary mt-3">No sales yet.</div>
 
-    <div v-else style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
-      <div v-for="p in data.topWinterProducts" :key="p.productId" class="card" style="background:#f8fafc;">
-        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-          <div>
-            <b>{{ p.name }}</b>
-            <div class="muted" style="font-size:12px;">Units sold: {{ p.unitsSold }}</div>
+      <div v-else class="d-flex flex-column gap-2 mt-3">
+        <div v-for="p in data.topWinterProducts" :key="p.productId" class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+              <div>
+                <b>{{ p.name }}</b>
+                <div class="text-secondary small">Units sold: {{ p.unitsSold }}</div>
+              </div>
+              <span class="badge text-bg-secondary">INR {{ p.revenue }}</span>
+            </div>
+
+            <div class="progress mt-3" style="height: 8px;">
+              <div
+                class="progress-bar"
+                :style="{ width: Math.min(100, (p.revenue / (data.topWinterProducts[0]?.revenue || 1)) * 100) + '%' }"
+              />
+            </div>
           </div>
-          <div class="pill">INR {{ p.revenue }}</div>
-        </div>
-        <div style="height:8px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:10px;">
-          <div
-            :style="{
-              height: '100%',
-              width: Math.min(100, (p.revenue / (data.topWinterProducts[0]?.revenue || 1)) * 100) + '%',
-              background: '#2563eb'
-            }"
-          />
         </div>
       </div>
     </div>

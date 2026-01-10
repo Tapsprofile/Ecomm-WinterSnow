@@ -23,41 +23,47 @@ onMounted(async () => {
 
 <template>
   <TopNav />
-  <div class="container">
-    <div class="card" style="padding:18px; margin-top:16px;">
-      <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+  <div class="container py-3">
+    <div class="card">
+      <div class="card-body d-flex justify-content-between align-items-start gap-3 flex-wrap">
         <div>
-          <div class="pill">Mobile-first • Fast</div>
-          <h1 style="margin:10px 0 6px; line-height:1.1;">Winter Snow</h1>
-          <div class="muted">Top Picks, New Arrivals, and Winter Collections.</div>
+          <span class="badge text-bg-secondary">Mobile-first • Fast</span>
+          <h1 class="h3 mt-3 mb-1">Winter Snow</h1>
+          <div class="text-secondary">Top Picks, New Arrivals, and Winter Collections.</div>
         </div>
-        <RouterLink to="/search" class="btn primary">Browse</RouterLink>
+        <RouterLink to="/search" class="btn btn-primary">Browse</RouterLink>
       </div>
     </div>
 
-    <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+    <div v-if="error" class="alert alert-danger mt-3" role="alert">
       <b>Error:</b> {{ error }}
     </div>
-    <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+    <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-    <section v-if="!loading" style="margin-top:18px;">
-      <h3 style="margin:0 0 10px;">Top Picks</h3>
-      <div class="grid">
-        <ProductCard v-for="p in data.topPicks" :key="p.productId" :item="p" />
+    <section v-if="!loading" class="mt-4">
+      <h3 class="h5 mb-3">Top Picks</h3>
+      <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-lg-4">
+        <div v-for="p in data.topPicks" :key="p.productId" class="col">
+          <ProductCard :item="p" />
+        </div>
       </div>
     </section>
 
-    <section v-if="!loading" style="margin-top:18px;">
-      <h3 style="margin:0 0 10px;">New Arrivals</h3>
-      <div class="grid">
-        <ProductCard v-for="p in data.newArrivals" :key="p.productId" :item="p" />
+    <section v-if="!loading" class="mt-4">
+      <h3 class="h5 mb-3">New Arrivals</h3>
+      <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-lg-4">
+        <div v-for="p in data.newArrivals" :key="p.productId" class="col">
+          <ProductCard :item="p" />
+        </div>
       </div>
     </section>
 
-    <section v-if="!loading" style="margin-top:18px; margin-bottom:28px;">
-      <h3 style="margin:0 0 10px;">Winter Collections</h3>
-      <div class="grid">
-        <ProductCard v-for="p in data.winterCollections" :key="p.productId" :item="p" />
+    <section v-if="!loading" class="mt-4 mb-4">
+      <h3 class="h5 mb-3">Winter Collections</h3>
+      <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-lg-4">
+        <div v-for="p in data.winterCollections" :key="p.productId" class="col">
+          <ProductCard :item="p" />
+        </div>
       </div>
     </section>
   </div>

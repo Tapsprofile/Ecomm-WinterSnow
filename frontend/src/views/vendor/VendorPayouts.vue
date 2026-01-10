@@ -20,25 +20,35 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="card" style="margin-top:12px;">
-    <div style="font-weight:900;">Payouts & Ledger</div>
-    <div class="muted">Total sales minus platform commission and next payout date.</div>
+  <div class="card mt-3">
+    <div class="card-body">
+      <div class="fw-bold">Payouts & Ledger</div>
+      <div class="text-secondary small">Total sales minus platform commission and next payout date.</div>
+    </div>
   </div>
 
-  <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+  <div v-if="error" class="alert alert-danger mt-3" role="alert">
     <b>Error:</b> {{ error }}
   </div>
-  <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+  <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="row" style="margin-top:12px;">
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Total Sales (net)</div>
-      <div style="font-size:26px; font-weight:900; margin-top:6px;">INR {{ data.totalSales }}</div>
+  <div v-if="!loading" class="row g-3 mt-1">
+    <div class="col-12 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Total Sales (net)</div>
+          <div class="h4 fw-bold mt-1 mb-0">INR {{ data.totalSales }}</div>
+        </div>
+      </div>
     </div>
-    <div class="col card">
-      <div class="muted" style="font-size:12px;">Next Payout Date</div>
-      <div style="font-size:18px; font-weight:800; margin-top:6px;">
-        {{ data.nextPayoutDateUtc ? new Date(data.nextPayoutDateUtc).toLocaleDateString() : '—' }}
+    <div class="col-12 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-secondary small">Next Payout Date</div>
+          <div class="h6 fw-bold mt-1 mb-0">
+            {{ data.nextPayoutDateUtc ? new Date(data.nextPayoutDateUtc).toLocaleDateString() : '—' }}
+          </div>
+        </div>
       </div>
     </div>
   </div>

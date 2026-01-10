@@ -59,32 +59,34 @@ async function submit() {
 
 <template>
   <TopNav />
-  <div class="container">
-    <div class="card" style="max-width:520px; margin: 24px auto;">
-      <div class="pill">{{ expectedRole }} portal</div>
-      <h2 style="margin:10px 0 6px;">{{ title() }}</h2>
-      <div class="muted">Use the credentials for the selected portal.</div>
+  <div class="container py-4">
+    <div class="card mx-auto" style="max-width: 520px;">
+      <div class="card-body">
+        <span class="badge text-bg-secondary">{{ expectedRole }} portal</span>
+        <h2 class="h4 mt-3 mb-1">{{ title() }}</h2>
+        <div class="text-secondary">Use the credentials for the selected portal.</div>
 
-      <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
-        <b>Error:</b> {{ error }}
-      </div>
+        <div v-if="error" class="alert alert-danger mt-3 mb-0" role="alert">
+          <b>Error:</b> {{ error }}
+        </div>
 
-      <form @submit.prevent="submit" style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
-        <label>
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Email</div>
-          <input class="input" v-model="email" autocomplete="username" />
-        </label>
-        <label>
-          <div class="muted" style="font-size:12px; margin-bottom:6px;">Password</div>
-          <input class="input" type="password" v-model="password" autocomplete="current-password" />
-        </label>
-        <button class="btn primary" :disabled="loading" type="submit">{{ loading ? 'Signing in…' : 'Sign in' }}</button>
-      </form>
+        <form class="mt-3" @submit.prevent="submit">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" v-model="email" autocomplete="username" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" v-model="password" autocomplete="current-password" />
+          </div>
+          <button class="btn btn-primary w-100" :disabled="loading" type="submit">
+            {{ loading ? 'Signing in…' : 'Sign in' }}
+          </button>
+        </form>
 
-      <div style="margin-top:12px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-        <RouterLink class="btn" to="/login">Back</RouterLink>
-        <div class="muted" style="font-size:12px;">
-          Theme is stored per role ({{ expectedRole }}).
+        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mt-3">
+          <RouterLink class="btn btn-link p-0" to="/login"><i class="bi bi-arrow-left" /> Back</RouterLink>
+          <div class="text-secondary small">Theme is stored per role ({{ expectedRole }}).</div>
         </div>
       </div>
     </div>

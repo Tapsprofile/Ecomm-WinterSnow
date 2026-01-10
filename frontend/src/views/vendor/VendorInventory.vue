@@ -66,93 +66,99 @@ async function bulkSave() {
 </script>
 
 <template>
-  <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+  <div v-if="error" class="alert alert-danger mt-3" role="alert">
     <b>Error:</b> {{ error }}
   </div>
-  <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+  <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="card" style="margin-top:12px;">
-    <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap;">
+  <div v-if="!loading" class="card mt-3">
+    <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
       <div>
-        <div style="font-weight:900;">Inventory Manager</div>
-        <div class="muted">Search, bulk edit prices/stock, manage discounts and coupon eligibility.</div>
+        <div class="fw-bold">Inventory Manager</div>
+        <div class="text-secondary small">Search, bulk edit prices/stock, manage discounts and coupon eligibility.</div>
       </div>
-      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-        <input class="input" style="width:260px;" v-model="q" placeholder="Search products…" />
-        <button class="btn primary" :disabled="saving" @click="bulkSave">{{ saving ? 'Saving…' : 'Bulk Save' }}</button>
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <input class="form-control" style="width: 260px;" v-model="q" placeholder="Search products…" />
+        <button class="btn btn-primary" type="button" :disabled="saving" @click="bulkSave">{{ saving ? 'Saving…' : 'Bulk Save' }}</button>
       </div>
     </div>
   </div>
 
-  <div v-if="!loading" class="card" style="margin-top:12px;">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Base Price</th>
-          <th>Status</th>
-          <th>Discount / Coupons</th>
-          <th style="width:45%;">Variations (Size/Color Matrix)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="p in filtered" :key="p.productId">
-          <td>
-            <div style="font-weight:800;">{{ p.name }}</div>
-            <div class="muted" style="font-size:12px;">/{{ p.slug }}</div>
-          </td>
-          <td>INR {{ p.price }}</td>
-          <td>
-            <span class="pill" v-if="p.isApprovedByAdmin && p.published">Live</span>
-            <span class="pill" v-else>Pending approval</span>
-          </td>
-          <td>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <label style="display:flex; gap:8px; align-items:center;">
-                <input type="checkbox" v-model="p.allowCoupons" />
-                Allow coupons
-              </label>
-              <label>
-                <div class="muted" style="font-size:12px; margin-bottom:6px;">Discount %</div>
-                <input class="input" type="number" min="0" max="100" v-model.number="p.discountPercent" />
-              </label>
-              <div class="row">
-                <label class="col">
-                  <div class="muted" style="font-size:12px; margin-bottom:6px;">Start (UTC)</div>
-                  <input class="input" v-model="p.discountStartUtc" placeholder="2026-01-10T00:00:00Z" />
-                </label>
-                <label class="col">
-                  <div class="muted" style="font-size:12px; margin-bottom:6px;">End (UTC)</div>
-                  <input class="input" v-model="p.discountEndUtc" placeholder="2026-01-17T00:00:00Z" />
-                </label>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <div v-for="v in p.variants" :key="v.variantId" class="card" style="background:#f8fafc;">
-                <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap;">
-                  <div>
-                    <b>{{ v.size || '-' }} / {{ v.color || '-' }}</b>
-                    <div class="muted" style="font-size:12px;">Variant #{{ v.variantId }}</div>
+  <div v-if="!loading" class="card mt-3">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Base Price</th>
+              <th>Status</th>
+              <th style="min-width: 260px;">Discount / Coupons</th>
+              <th style="min-width: 420px;">Variations (Size/Color Matrix)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="p in filtered" :key="p.productId">
+              <td>
+                <div class="fw-semibold">{{ p.name }}</div>
+                <div class="text-secondary small">/{{ p.slug }}</div>
+              </td>
+              <td>INR {{ p.price }}</td>
+              <td>
+                <span v-if="p.isApprovedByAdmin && p.published" class="badge text-bg-success">Live</span>
+                <span v-else class="badge text-bg-secondary">Pending approval</span>
+              </td>
+              <td>
+                <div class="d-flex flex-column gap-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" :id="`allowCoupons-${p.productId}`" v-model="p.allowCoupons" />
+                    <label class="form-check-label" :for="`allowCoupons-${p.productId}`">Allow coupons</label>
                   </div>
-                  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                    <label style="display:flex; flex-direction:column; gap:4px;">
-                      <span class="muted" style="font-size:12px;">Override price</span>
-                      <input class="input" style="width:140px;" type="number" v-model.number="v.overridePrice" />
-                    </label>
-                    <label style="display:flex; flex-direction:column; gap:4px;">
-                      <span class="muted" style="font-size:12px;">Stock</span>
-                      <input class="input" style="width:120px;" type="number" min="0" v-model.number="v.stockQuantity" />
-                    </label>
+                  <div>
+                    <label class="form-label small text-secondary mb-1">Discount %</label>
+                    <input class="form-control form-control-sm" type="number" min="0" max="100" v-model.number="p.discountPercent" />
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <label class="form-label small text-secondary mb-1">Start (UTC)</label>
+                      <input class="form-control form-control-sm" v-model="p.discountStartUtc" placeholder="2026-01-10T00:00:00Z" />
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label small text-secondary mb-1">End (UTC)</label>
+                      <input class="form-control form-control-sm" v-model="p.discountEndUtc" placeholder="2026-01-17T00:00:00Z" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              </td>
+              <td>
+                <div class="d-flex flex-column gap-2">
+                  <div v-for="v in p.variants" :key="v.variantId" class="card">
+                    <div class="card-body py-2">
+                      <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                        <div>
+                          <b>{{ v.size || '-' }} / {{ v.color || '-' }}</b>
+                          <div class="text-secondary small">Variant #{{ v.variantId }}</div>
+                        </div>
+                        <div class="d-flex gap-2 align-items-end flex-wrap">
+                          <div>
+                            <div class="text-secondary small mb-1">Override price</div>
+                            <input class="form-control form-control-sm" style="width: 140px;" type="number" v-model.number="v.overridePrice" />
+                          </div>
+                          <div>
+                            <div class="text-secondary small mb-1">Stock</div>
+                            <input class="form-control form-control-sm" style="width: 120px;" type="number" min="0" v-model.number="v.stockQuantity" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 

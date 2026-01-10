@@ -61,86 +61,102 @@ onMounted(load)
 </script>
 
 <template>
-  <div v-if="error" class="card" style="border-color:#fecaca; background:#fef2f2; margin-top:12px;">
+  <div v-if="error" class="alert alert-danger mt-3" role="alert">
     <b>Error:</b> {{ error }}
   </div>
-  <div v-if="loading" class="muted" style="margin-top:12px;">Loading…</div>
+  <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="row" style="margin-top:12px; align-items:flex-start;">
-    <div class="col">
+  <div v-if="!loading" class="row g-3 mt-1 align-items-start">
+    <div class="col-12 col-lg-6">
       <div class="card">
-        <div style="font-weight:900;">Sitewide Banners</div>
-        <div class="muted">Create banners for winter sales.</div>
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-          <input class="input" v-model="newBanner.title" placeholder="Title" />
-          <input class="input" v-model="newBanner.imageUrl" placeholder="Image URL" />
-          <input class="input" v-model="newBanner.targetUrl" placeholder="Target URL" />
-          <label style="display:flex; gap:8px; align-items:center;">
-            <input type="checkbox" v-model="newBanner.isActive" /> Active
-          </label>
-          <button class="btn primary" @click="createBanner">Create banner</button>
-        </div>
+        <div class="card-body">
+          <div class="fw-bold">Sitewide Banners</div>
+          <div class="text-secondary small">Create banners for winter sales.</div>
 
-        <table class="table" style="margin-top:12px;">
-          <thead><tr><th>Title</th><th>Active</th></tr></thead>
-          <tbody>
-            <tr v-for="b in banners" :key="b.id">
-              <td><b>{{ b.title }}</b> <span class="muted">{{ b.targetUrl }}</span></td>
-              <td><span class="pill">{{ b.isActive ? 'Yes' : 'No' }}</span></td>
-            </tr>
-          </tbody>
-        </table>
+          <div class="mt-3 d-flex flex-column gap-2">
+            <input class="form-control" v-model="newBanner.title" placeholder="Title" />
+            <input class="form-control" v-model="newBanner.imageUrl" placeholder="Image URL" />
+            <input class="form-control" v-model="newBanner.targetUrl" placeholder="Target URL" />
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="bannerActive" v-model="newBanner.isActive" />
+              <label class="form-check-label" for="bannerActive">Active</label>
+            </div>
+            <button class="btn btn-primary" @click="createBanner">Create banner</button>
+          </div>
+
+          <div class="table-responsive mt-3">
+            <table class="table align-middle">
+              <thead><tr><th>Title</th><th>Active</th></tr></thead>
+              <tbody>
+                <tr v-for="b in banners" :key="b.id">
+                  <td><b>{{ b.title }}</b> <span class="text-secondary small ms-2">{{ b.targetUrl }}</span></td>
+                  <td><span class="badge" :class="b.isActive ? 'text-bg-success' : 'text-bg-secondary'">{{ b.isActive ? 'Yes' : 'No' }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="col">
+    <div class="col-12 col-lg-6">
       <div class="card">
-        <div style="font-weight:900;">Discount Codes</div>
-        <div class="muted">Coupons and promotions engine basics.</div>
+        <div class="card-body">
+          <div class="fw-bold">Discount Codes</div>
+          <div class="text-secondary small">Coupons and promotions engine basics.</div>
 
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-          <input class="input" v-model="newCoupon.code" placeholder="Code (e.g. WINTER10)" />
-          <input class="input" v-model="newCoupon.description" placeholder="Description" />
-          <input class="input" type="number" v-model.number="newCoupon.discountAmount" placeholder="Discount amount" />
-          <label style="display:flex; gap:8px; align-items:center;">
-            <input type="checkbox" v-model="newCoupon.isActive" /> Active
-          </label>
-          <button class="btn primary" @click="createCoupon">Create coupon</button>
+          <div class="mt-3 d-flex flex-column gap-2">
+            <input class="form-control" v-model="newCoupon.code" placeholder="Code (e.g. WINTER10)" />
+            <input class="form-control" v-model="newCoupon.description" placeholder="Description" />
+            <input class="form-control" type="number" v-model.number="newCoupon.discountAmount" placeholder="Discount amount" />
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="couponActive" v-model="newCoupon.isActive" />
+              <label class="form-check-label" for="couponActive">Active</label>
+            </div>
+            <button class="btn btn-primary" @click="createCoupon">Create coupon</button>
+          </div>
+
+          <div class="table-responsive mt-3">
+            <table class="table align-middle">
+              <thead><tr><th>Code</th><th>Discount</th></tr></thead>
+              <tbody>
+                <tr v-for="c in coupons" :key="c.id">
+                  <td><b>{{ c.code }}</b> <span class="text-secondary small ms-2">{{ c.description }}</span></td>
+                  <td>INR {{ c.discountAmount }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-
-        <table class="table" style="margin-top:12px;">
-          <thead><tr><th>Code</th><th>Discount</th></tr></thead>
-          <tbody>
-            <tr v-for="c in coupons" :key="c.id">
-              <td><b>{{ c.code }}</b> <span class="muted">{{ c.description }}</span></td>
-              <td>INR {{ c.discountAmount }}</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
 
-      <div class="card" style="margin-top:12px;">
-        <div style="font-weight:900;">Flash Sales</div>
-        <div class="muted">Create timed sales events.</div>
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="fw-bold">Flash Sales</div>
+          <div class="text-secondary small">Create timed sales events.</div>
 
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-          <input class="input" v-model="newFlash.name" placeholder="Event name" />
-          <input class="input" type="number" v-model.number="newFlash.discountPercent" placeholder="Discount percent" />
-          <label style="display:flex; gap:8px; align-items:center;">
-            <input type="checkbox" v-model="newFlash.isActive" /> Active
-          </label>
-          <button class="btn primary" @click="createFlashSale">Create flash sale</button>
+          <div class="mt-3 d-flex flex-column gap-2">
+            <input class="form-control" v-model="newFlash.name" placeholder="Event name" />
+            <input class="form-control" type="number" v-model.number="newFlash.discountPercent" placeholder="Discount percent" />
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="flashActive" v-model="newFlash.isActive" />
+              <label class="form-check-label" for="flashActive">Active</label>
+            </div>
+            <button class="btn btn-primary" @click="createFlashSale">Create flash sale</button>
+          </div>
+
+          <div class="table-responsive mt-3">
+            <table class="table align-middle">
+              <thead><tr><th>Name</th><th>Discount</th></tr></thead>
+              <tbody>
+                <tr v-for="f in flashSales" :key="f.id">
+                  <td><b>{{ f.name }}</b> <span class="text-secondary small ms-2">{{ f.startUtc }} → {{ f.endUtc }}</span></td>
+                  <td>{{ f.discountPercent }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-
-        <table class="table" style="margin-top:12px;">
-          <thead><tr><th>Name</th><th>Discount</th></tr></thead>
-          <tbody>
-            <tr v-for="f in flashSales" :key="f.id">
-              <td><b>{{ f.name }}</b> <span class="muted">{{ f.startUtc }} → {{ f.endUtc }}</span></td>
-              <td>{{ f.discountPercent }}%</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
