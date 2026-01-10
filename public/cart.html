@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - WinterSnow</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <h1>❄️ WinterSnow</h1>
+                </div>
+                <div class="nav-menu">
+                    <a href="/" class="nav-link">Products</a>
+                    <a href="/cart.html" class="nav-link active">
+                        Cart <span id="cart-count" class="badge">0</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="cart-section">
+            <div class="container">
+                <h2>Shopping Cart</h2>
+                <div id="cart-container">
+                    <!-- Cart items will be loaded here dynamically -->
+                </div>
+                <div id="cart-summary" class="cart-summary">
+                    <!-- Cart summary will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 WinterSnow E-commerce Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/cart.js"></script>
+</body>
+</html>
