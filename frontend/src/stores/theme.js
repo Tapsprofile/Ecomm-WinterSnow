@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useAuthStore } from './auth'
 
 const STORAGE_KEY = 'wintersnow.theme'
@@ -12,11 +12,11 @@ export const useThemeStore = defineStore('theme', () => {
   const auth = useAuthStore()
 
   const saved = safeJsonParse(localStorage.getItem(STORAGE_KEY)) || {}
-  const modeByRole = {
+  const modeByRole = reactive({
     Customer: saved.Customer || 'light',
     Vendor: saved.Vendor || 'dark',
     Admin: saved.Admin || 'dark'
-  }
+  })
 
   const roleKey = computed(() => auth.role || 'Customer')
   const mode = computed(() => modeByRole[roleKey.value] || 'light')
@@ -28,7 +28,7 @@ export const useThemeStore = defineStore('theme', () => {
 
   function setModeForRole(role, nextMode) {
     modeByRole[role] = nextMode
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(modeByRole))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...modeByRole }))
     apply()
   }
 
