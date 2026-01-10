@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useCartStore } from '../../stores/cart'
 import { useAuthStore } from '../../stores/auth'
+import ThemeToggle from './ThemeToggle.vue'
 import { apiGet } from '../../lib/api'
 
 const router = useRouter()
@@ -77,6 +78,7 @@ function pickSuggestion(s) {
       </div>
 
       <RouterLink to="/checkout" class="pill">Cart: {{ cart.totalItems }}</RouterLink>
+      <ThemeToggle />
       <RouterLink v-if="roleLink" :to="roleLink.to" class="pill">{{ roleLink.label }}</RouterLink>
       <RouterLink v-if="!auth.isAuthenticated" to="/login" class="pill">Login</RouterLink>
       <button v-else class="btn" @click="auth.logout()">Logout</button>

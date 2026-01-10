@@ -7,6 +7,7 @@ import ProductDetails from '../views/storefront/ProductDetails.vue'
 import Checkout from '../views/storefront/Checkout.vue'
 
 import Login from '../views/auth/Login.vue'
+import RoleLogin from '../views/auth/RoleLogin.vue'
 
 import VendorLayout from '../layouts/VendorLayout.vue'
 import VendorDashboard from '../views/vendor/VendorDashboard.vue'
@@ -31,6 +32,9 @@ export function createRouter() {
       { path: '/checkout', name: 'checkout', component: Checkout },
 
       { path: '/login', name: 'login', component: Login },
+      { path: '/login/customer', name: 'login.customer', component: RoleLogin, meta: { loginRole: 'Customer' } },
+      { path: '/login/vendor', name: 'login.vendor', component: RoleLogin, meta: { loginRole: 'Vendor' } },
+      { path: '/login/admin', name: 'login.admin', component: RoleLogin, meta: { loginRole: 'Admin' } },
 
       {
         path: '/vendor',
