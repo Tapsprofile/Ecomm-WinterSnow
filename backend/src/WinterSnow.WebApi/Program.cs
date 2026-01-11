@@ -13,7 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o =>
+{
+    // Prevent schema ID collisions for nested/duplicate DTO names (e.g. multiple SetActiveRequest types).
+    o.CustomSchemaIds(t => t.FullName);
+});
 builder.Services.AddHttpClient();
 
 builder.Services.AddCors(o =>

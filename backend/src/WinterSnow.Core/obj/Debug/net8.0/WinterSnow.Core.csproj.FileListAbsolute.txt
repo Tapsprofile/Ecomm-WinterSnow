@@ -1,0 +1,12 @@
+/workspace/backend/src/WinterSnow.Core/bin/Debug/net8.0/WinterSnow.Core.deps.json
+/workspace/backend/src/WinterSnow.Core/bin/Debug/net8.0/WinterSnow.Core.dll
+/workspace/backend/src/WinterSnow.Core/bin/Debug/net8.0/WinterSnow.Core.pdb
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/WinterSnow.Core.GeneratedMSBuildEditorConfig.editorconfig
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/WinterSnow.Core.AssemblyInfoInputs.cache
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/WinterSnow.Core.AssemblyInfo.cs
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/WinterSnow.Core.csproj.CoreCompileInputs.cache
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/WinterSnow.Core.sourcelink.json
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/WinterSnow.Core.dll
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/refint/WinterSnow.Core.dll
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/WinterSnow.Core.pdb
+/workspace/backend/src/WinterSnow.Core/obj/Debug/net8.0/ref/WinterSnow.Core.dll
