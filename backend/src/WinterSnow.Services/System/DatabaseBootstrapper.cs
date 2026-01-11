@@ -183,6 +183,17 @@ public class DatabaseBootstrapper
         );
 
         await _db.SaveChangesAsync(ct);
+
+        // Demo notification seed
+        _db.Notifications.Add(new WinterSnow.Core.Domain.Notifications.Notification
+        {
+            RecipientType = WinterSnow.Core.Domain.Notifications.NotificationRecipientType.Customer,
+            RecipientUserId = customerId,
+            Title = "Welcome to WinterSnow",
+            Body = "Your in-app notifications will appear in the top-right bell.",
+            ActionUrl = "/"
+        });
+        await _db.SaveChangesAsync(ct);
     }
 }
 

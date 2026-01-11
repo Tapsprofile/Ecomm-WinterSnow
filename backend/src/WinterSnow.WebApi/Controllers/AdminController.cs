@@ -16,12 +16,14 @@ public class AdminController : ControllerBase
     private readonly IAdminService _admin;
     private readonly WinterSnowDbContext _db;
     private readonly ApiMetrics _metrics;
+    private readonly WinterSnow.Services.Notifications.INotificationQueue _notifications;
 
-    public AdminController(IAdminService admin, WinterSnowDbContext db, ApiMetrics metrics)
+    public AdminController(IAdminService admin, WinterSnowDbContext db, ApiMetrics metrics, WinterSnow.Services.Notifications.INotificationQueue notifications)
     {
         _admin = admin;
         _db = db;
         _metrics = metrics;
+        _notifications = notifications;
     }
 
     [HttpGet("moderation/vendors")]
@@ -43,6 +45,19 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> ApproveProduct([FromRoute] int productId, CancellationToken ct)
     {
         await _admin.ApproveProductAsync(productId, ct);
+
+        var p = await _db.Products.FirstOrDefaultAsync(x => x.Id == productId, ct);
+        if (p is not null)
+        {
+            await _notifications.EnqueueAsync(new WinterSnow.Services.Notifications.NotificationMessage
+            {
+                RecipientType = WinterSnow.Core.Domain.Notifications.NotificationRecipientType.Vendor,
+                RecipientVendorId = p.VendorId,
+                Title = "Listing approved",
+                Body = $"Your listing \"{p.Name}\" has been approved and is now live.",
+                ActionUrl = $"/p/{p.Slug}"
+            }, ct);
+        }
         return NoContent();
     }
 

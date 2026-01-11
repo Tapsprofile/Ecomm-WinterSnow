@@ -10,6 +10,7 @@ using WinterSnow.Core.Domain.Configuration;
 using WinterSnow.Core.Domain.Auditing;
 using WinterSnow.Core.Domain.Webhooks;
 using WinterSnow.Core.Domain.Returns;
+using WinterSnow.Core.Domain.Notifications;
 
 namespace WinterSnow.Data;
 
@@ -49,6 +50,7 @@ public class WinterSnowDbContext : DbContext
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<WebhookSubscription> WebhookSubscriptions => Set<WebhookSubscription>();
     public DbSet<ReturnRequest> ReturnRequests => Set<ReturnRequest>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -102,6 +104,14 @@ public class WinterSnowDbContext : DbContext
             b.HasIndex(x => x.PaymentProviderSystemName);
             b.HasIndex(x => x.ProviderOrderId);
             b.HasIndex(x => x.ProviderPaymentId);
+        });
+
+        modelBuilder.Entity<Notification>(b =>
+        {
+            b.HasIndex(x => x.CreatedOnUtc);
+            b.HasIndex(x => x.IsRead);
+            b.HasIndex(x => new { x.RecipientType, x.RecipientUserId });
+            b.HasIndex(x => new { x.RecipientType, x.RecipientVendorId });
         });
     }
 }

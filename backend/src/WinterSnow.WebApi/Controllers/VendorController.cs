@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WinterSnow.Core.Domain.Orders;
 using WinterSnow.Data;
+using WinterSnow.Services.Notifications;
 using WinterSnow.Services.Vendor;
 
 namespace WinterSnow.WebApi.Controllers;
@@ -15,12 +16,14 @@ public class VendorController : ControllerBase
 {
     private readonly IVendorDashboardService _dashboard;
     private readonly IVendorListingService _listings;
+    private readonly INotificationQueue _notifications;
     private readonly WinterSnowDbContext _db;
 
-    public VendorController(IVendorDashboardService dashboard, IVendorListingService listings, WinterSnowDbContext db)
+    public VendorController(IVendorDashboardService dashboard, IVendorListingService listings, INotificationQueue notifications, WinterSnowDbContext db)
     {
         _dashboard = dashboard;
         _listings = listings;
+        _notifications = notifications;
         _db = db;
     }
 
@@ -53,6 +56,16 @@ public class VendorController : ControllerBase
             return Unauthorized();
 
         var id = await _listings.CreateListingAsync(VendorId, req, ct);
+
+        await _notifications.EnqueueAsync(new NotificationMessage
+        {
+            RecipientType = WinterSnow.Core.Domain.Notifications.NotificationRecipientType.Vendor,
+            RecipientVendorId = VendorId,
+            Title = "Listing submitted",
+            Body = $"Your listing \"{req.Name}\" was submitted for admin approval.",
+            ActionUrl = "/vendor/inventory"
+        }, ct);
+
         return Ok(new { productId = id });
     }
 

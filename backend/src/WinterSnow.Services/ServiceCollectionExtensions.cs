@@ -13,6 +13,7 @@ using WinterSnow.Services.Returns;
 using WinterSnow.Services.System;
 using WinterSnow.Services.Vendor;
 using WinterSnow.Services.Webhooks;
+using WinterSnow.Services.Notifications;
 
 namespace WinterSnow.Services;
 
@@ -55,6 +56,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IWebhookAdminService, WebhookAdminService>();
         services.AddScoped<IWebhookDispatcher, WebhookDispatcher>();
         services.AddScoped<IReturnService, ReturnService>();
+
+        // Notifications (internal queue by default)
+        services.AddSingleton<INotificationQueue, InternalNotificationQueue>();
+        services.AddScoped<INotificationProvider, InAppNotificationProvider>();
+        services.AddScoped<INotificationProvider, EmailNotificationProviderStub>();
+        services.AddScoped<INotificationProvider, SmsNotificationProviderStub>();
+        services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
+        services.AddScoped<INotificationInboxService, NotificationInboxService>();
 
         return services;
     }

@@ -41,6 +41,7 @@ builder.Services.AddDbContext<WinterSnowDbContext>(options =>
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddWinterSnowServices();
 builder.Services.AddScoped<DatabaseBootstrapper>();
+builder.Services.AddHostedService<WinterSnow.Services.Notifications.NotificationBackgroundWorker>();
 
 var jwt = builder.Configuration.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

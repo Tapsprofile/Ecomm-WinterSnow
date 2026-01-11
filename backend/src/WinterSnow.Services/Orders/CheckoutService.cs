@@ -7,6 +7,7 @@ using WinterSnow.Core.Domain.Marketing;
 using WinterSnow.Data;
 using WinterSnow.Services.Payments;
 using WinterSnow.Services.Payments.Providers;
+using WinterSnow.Services.Notifications;
 
 namespace WinterSnow.Services.Orders;
 
@@ -16,17 +17,20 @@ public class CheckoutService : ICheckoutService
     private readonly IAddressValidationService _addressValidation;
     private readonly IPaymentRoutingService _routing;
     private readonly IPaymentGatewayRegistry _gateways;
+    private readonly INotificationQueue _notifications;
 
     public CheckoutService(
         WinterSnowDbContext db,
         IAddressValidationService addressValidation,
         IPaymentRoutingService routing,
-        IPaymentGatewayRegistry gateways)
+        IPaymentGatewayRegistry gateways,
+        INotificationQueue notifications)
     {
         _db = db;
         _addressValidation = addressValidation;
         _routing = routing;
         _gateways = gateways;
+        _notifications = notifications;
     }
 
     public async Task<List<SplitOrderSummary>> PreviewSplitAsync(List<CheckoutItem> items, CancellationToken ct = default)
@@ -322,6 +326,29 @@ public class CheckoutService : ICheckoutService
         await tx.CommitAsync(ct);
 
         var single = sessions.Count == 1 ? sessions[0].SessionId : null;
+
+        // Notifications (in-app)
+        await _notifications.EnqueueAsync(new NotificationMessage
+        {
+            RecipientType = WinterSnow.Core.Domain.Notifications.NotificationRecipientType.Customer,
+            RecipientUserId = customerId,
+            Title = "Order placed",
+            Body = $"Your checkout created {createdOrderIds.Count} order(s). Payment group: {paymentGroupId}.",
+            ActionUrl = "/"
+        }, ct);
+
+        foreach (var vendorId in split.Select(s => s.VendorId).Distinct())
+        {
+            await _notifications.EnqueueAsync(new NotificationMessage
+            {
+                RecipientType = WinterSnow.Core.Domain.Notifications.NotificationRecipientType.Vendor,
+                RecipientVendorId = vendorId,
+                Title = "New order",
+                Body = "A new order was placed containing your items.",
+                ActionUrl = "/vendor/orders"
+            }, ct);
+        }
+
         return new CheckoutResult
         {
             CreatedOrderIds = createdOrderIds,

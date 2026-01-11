@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WinterSnow.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96c1941be4e38f8988a932c89756ee5a0793a11b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ebf7ff9faa4ea1b89830ad9f411186551ec53c86")]
 [assembly: System.Reflection.AssemblyProductAttribute("WinterSnow.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WinterSnow.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

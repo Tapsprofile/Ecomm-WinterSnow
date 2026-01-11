@@ -5,11 +5,14 @@ import { useCartStore } from '../../stores/cart'
 import { useAuthStore } from '../../stores/auth'
 import ThemeToggle from './ThemeToggle.vue'
 import { apiGet } from '../../lib/api'
+import { useNotificationsStore } from '../../stores/notifications'
+import { onMounted, onUnmounted } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
 const cart = useCartStore()
 const auth = useAuthStore()
+const notifications = useNotificationsStore()
 
 const q = ref(route.query.q?.toString() || '')
 watch(
@@ -57,6 +60,18 @@ function pickSuggestion(s) {
   q.value = s
   onSearchSubmit()
 }
+
+let poll = null
+onMounted(async () => {
+  if (auth.isAuthenticated) await notifications.refresh()
+  poll = setInterval(() => {
+    if (auth.isAuthenticated) notifications.refresh().catch(() => {})
+  }, 20000)
+})
+
+onUnmounted(() => {
+  if (poll) clearInterval(poll)
+})
 </script>
 
 <template>
@@ -101,6 +116,46 @@ function pickSuggestion(s) {
           Cart
           <span class="badge text-bg-secondary ms-2">{{ cart.totalItems }}</span>
         </RouterLink>
+
+        <div v-if="auth.isAuthenticated" class="dropdown">
+          <button
+            class="btn btn-outline-secondary btn-sm dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            @click="notifications.refresh().catch(() => {})"
+          >
+            <i class="bi bi-bell me-1" />
+            <span v-if="notifications.unread" class="badge text-bg-danger ms-1">{{ notifications.unread }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 360px;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="fw-bold">Notifications</div>
+              <button class="btn btn-link btn-sm" type="button" @click="notifications.markAllRead()">Mark all read</button>
+            </div>
+
+            <div v-if="!notifications.items.length" class="text-secondary small p-2">No notifications.</div>
+
+            <div v-else class="list-group">
+              <button
+                v-for="n in notifications.items"
+                :key="n.id"
+                type="button"
+                class="list-group-item list-group-item-action"
+                :class="{ 'fw-semibold': !n.isRead }"
+                @click="notifications.markRead(n.id)"
+              >
+                <div class="d-flex justify-content-between gap-2">
+                  <div>
+                    <div>{{ n.title }}</div>
+                    <div class="text-secondary small">{{ n.body }}</div>
+                  </div>
+                  <div class="text-secondary small">{{ new Date(n.createdOnUtc).toLocaleTimeString() }}</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <ThemeToggle />
 
