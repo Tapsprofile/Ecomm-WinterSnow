@@ -20,9 +20,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="card mt-3">
+  <div class="card ws-card mt-3">
     <div class="card-body">
-      <div class="fw-bold">Payouts & Ledger</div>
+      <div class="ws-section-kicker mb-1">Payouts & ledger</div>
+      <div class="fw-bold">Vendor finance</div>
       <div class="text-secondary small">Total sales minus platform commission and next payout date.</div>
     </div>
   </div>
@@ -34,7 +35,7 @@ onMounted(async () => {
 
   <div v-if="!loading" class="row g-3 mt-1">
     <div class="col-12 col-md-6">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Total Sales (net)</div>
           <div class="h4 fw-bold mt-1 mb-0">INR {{ data.totalSales }}</div>
@@ -42,7 +43,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="col-12 col-md-6">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Next Payout Date</div>
           <div class="h6 fw-bold mt-1 mb-0">

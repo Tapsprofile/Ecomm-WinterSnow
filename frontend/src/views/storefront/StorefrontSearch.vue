@@ -76,9 +76,10 @@ onMounted(load)
   <div class="container py-3">
     <div class="row g-3 align-items-start">
       <aside class="col-12 col-lg-3">
-        <div class="card">
+        <div class="card ws-card">
           <div class="card-body">
-            <div class="fw-bold mb-3">Faceted Filtering</div>
+            <div class="ws-section-kicker mb-2">Faceted filtering</div>
+            <div class="fw-bold mb-3">Find products</div>
 
             <div class="mb-3">
               <label class="form-label small text-secondary">Query</label>
@@ -126,7 +127,11 @@ onMounted(load)
               </select>
             </div>
 
-            <button class="btn btn-outline-secondary w-100 mt-3" type="button" @click="q=''; material=''; size=''; color=''; minPrice=''; maxPrice='';">
+            <button
+              class="btn ws-btn-outline w-100 mt-3"
+              type="button"
+              @click="q=''; material=''; size=''; color=''; minPrice=''; maxPrice=''; postalCode='';"
+            >
               Clear filters
             </button>
           </div>
@@ -134,13 +139,14 @@ onMounted(load)
       </aside>
 
       <main class="col-12 col-lg-9">
-        <div class="card">
+        <div class="card ws-card">
           <div class="card-body d-flex justify-content-between align-items-center">
             <div>
-              <div class="fw-bold">Results</div>
+              <div class="ws-section-kicker mb-1">Results</div>
+              <div class="fw-bold">Products</div>
               <div class="text-secondary small">{{ data.total }} products</div>
             </div>
-            <RouterLink to="/" class="btn btn-outline-secondary btn-sm">Back to home</RouterLink>
+            <RouterLink to="/store" class="btn ws-btn-outline btn-sm">Back to store</RouterLink>
           </div>
         </div>
 

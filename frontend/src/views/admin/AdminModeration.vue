@@ -41,8 +41,9 @@ onMounted(load)
 
   <div v-if="!loading" class="row g-3 mt-1 align-items-start">
     <div class="col-12 col-lg-6">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
+          <div class="ws-section-kicker mb-1">Moderation</div>
           <div class="fw-bold">Vendor Moderation</div>
           <div class="text-secondary small">New registrations requiring approval (KYC).</div>
 
@@ -60,7 +61,7 @@ onMounted(load)
                     </span>
                   </td>
                   <td class="text-end">
-                    <button class="btn btn-primary btn-sm" :disabled="v.isKycApproved" @click="approveVendor(v.vendorId)">Approve</button>
+                    <button class="btn ws-btn-dark btn-sm" :disabled="v.isKycApproved" @click="approveVendor(v.vendorId)">Approve</button>
                   </td>
                 </tr>
               </tbody>
@@ -72,8 +73,9 @@ onMounted(load)
     </div>
 
     <div class="col-12 col-lg-6">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
+          <div class="ws-section-kicker mb-1">Moderation</div>
           <div class="fw-bold">Product Submissions</div>
           <div class="text-secondary small">Products requiring approval to publish.</div>
 
@@ -87,7 +89,7 @@ onMounted(load)
                   <td><b>#{{ p.productId }}</b> {{ p.name }} <span class="text-secondary small">/{{ p.slug }}</span></td>
                   <td>#{{ p.vendorId }}</td>
                   <td class="text-end">
-                    <button class="btn btn-primary btn-sm" :disabled="p.isApprovedByAdmin" @click="approveProduct(p.productId)">Approve</button>
+                    <button class="btn ws-btn-dark btn-sm" :disabled="p.isApprovedByAdmin" @click="approveProduct(p.productId)">Approve</button>
                   </td>
                 </tr>
               </tbody>

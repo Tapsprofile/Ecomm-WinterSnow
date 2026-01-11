@@ -68,8 +68,9 @@ onMounted(load)
 
   <div v-if="!loading" class="row g-3 mt-1 align-items-start">
     <div class="col-12 col-lg-6">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
+          <div class="ws-section-kicker mb-1">Marketing</div>
           <div class="fw-bold">Sitewide Banners</div>
           <div class="text-secondary small">Create banners for winter sales.</div>
 
@@ -81,7 +82,7 @@ onMounted(load)
               <input class="form-check-input" type="checkbox" id="bannerActive" v-model="newBanner.isActive" />
               <label class="form-check-label" for="bannerActive">Active</label>
             </div>
-            <button class="btn btn-primary" @click="createBanner">Create banner</button>
+            <button class="btn ws-btn-dark" @click="createBanner">Create banner</button>
           </div>
 
           <div class="table-responsive mt-3">
@@ -100,8 +101,9 @@ onMounted(load)
     </div>
 
     <div class="col-12 col-lg-6">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
+          <div class="ws-section-kicker mb-1">Marketing</div>
           <div class="fw-bold">Discount Codes</div>
           <div class="text-secondary small">Coupons and promotions engine basics.</div>
 
@@ -113,7 +115,7 @@ onMounted(load)
               <input class="form-check-input" type="checkbox" id="couponActive" v-model="newCoupon.isActive" />
               <label class="form-check-label" for="couponActive">Active</label>
             </div>
-            <button class="btn btn-primary" @click="createCoupon">Create coupon</button>
+            <button class="btn ws-btn-dark" @click="createCoupon">Create coupon</button>
           </div>
 
           <div class="table-responsive mt-3">
@@ -130,8 +132,9 @@ onMounted(load)
         </div>
       </div>
 
-      <div class="card mt-3">
+      <div class="card ws-card mt-3">
         <div class="card-body">
+          <div class="ws-section-kicker mb-1">Marketing</div>
           <div class="fw-bold">Flash Sales</div>
           <div class="text-secondary small">Create timed sales events.</div>
 
@@ -142,7 +145,7 @@ onMounted(load)
               <input class="form-check-input" type="checkbox" id="flashActive" v-model="newFlash.isActive" />
               <label class="form-check-label" for="flashActive">Active</label>
             </div>
-            <button class="btn btn-primary" @click="createFlashSale">Create flash sale</button>
+            <button class="btn ws-btn-dark" @click="createFlashSale">Create flash sale</button>
           </div>
 
           <div class="table-responsive mt-3">

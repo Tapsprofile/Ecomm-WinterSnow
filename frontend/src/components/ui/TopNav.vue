@@ -14,6 +14,8 @@ const cart = useCartStore()
 const auth = useAuthStore()
 const notifications = useNotificationsStore()
 
+const navRef = ref(null)
+
 const q = ref(route.query.q?.toString() || '')
 watch(
   () => route.query.q,
@@ -61,21 +63,31 @@ function pickSuggestion(s) {
   onSearchSubmit()
 }
 
+function onScroll() {
+  const el = navRef.value
+  if (!el) return
+  el.classList.toggle('ws-nav-shadow', window.scrollY > 50)
+}
+
 let poll = null
 onMounted(async () => {
   if (auth.isAuthenticated) await notifications.refresh()
   poll = setInterval(() => {
     if (auth.isAuthenticated) notifications.refresh().catch(() => {})
   }, 20000)
+
+  window.addEventListener('scroll', onScroll, { passive: true })
+  onScroll()
 })
 
 onUnmounted(() => {
   if (poll) clearInterval(poll)
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg sticky-top bg-body border-bottom">
+  <nav ref="navRef" class="navbar navbar-expand-lg sticky-top ws-nav-glass">
     <div class="container">
       <RouterLink to="/store" class="navbar-brand fw-bold">WinterSnow</RouterLink>
 
@@ -84,7 +96,7 @@ onUnmounted(() => {
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-search" /></span>
             <input class="form-control" v-model="q" placeholder="Search (size, material, etc.)" />
-            <button class="btn btn-primary" type="submit">Search</button>
+            <button class="btn ws-btn-dark" type="submit">Search</button>
           </div>
         </form>
 
@@ -111,7 +123,7 @@ onUnmounted(() => {
       </div>
 
       <div class="d-flex align-items-center gap-2 ms-2">
-        <RouterLink to="/checkout" class="btn btn-outline-secondary btn-sm">
+        <RouterLink to="/checkout" class="btn ws-btn-outline btn-sm">
           <i class="bi bi-bag me-1" />
           Cart
           <span class="badge text-bg-secondary ms-2">{{ cart.totalItems }}</span>
@@ -119,7 +131,7 @@ onUnmounted(() => {
 
         <div v-if="auth.isAuthenticated" class="dropdown">
           <button
-            class="btn btn-outline-secondary btn-sm dropdown-toggle"
+            class="btn ws-btn-outline btn-sm dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
@@ -159,15 +171,15 @@ onUnmounted(() => {
 
         <ThemeToggle />
 
-        <RouterLink v-if="roleLink" :to="roleLink.to" class="btn btn-outline-primary btn-sm">
+        <RouterLink v-if="roleLink" :to="roleLink.to" class="btn ws-btn-outline btn-sm">
           <i class="bi bi-grid me-1" />
           {{ roleLink.label }}
         </RouterLink>
 
-        <RouterLink v-if="!auth.isAuthenticated" to="/login" class="btn btn-primary btn-sm">
+        <RouterLink v-if="!auth.isAuthenticated" to="/login" class="btn ws-btn-danger btn-sm">
           Login
         </RouterLink>
-        <button v-else class="btn btn-outline-secondary btn-sm" type="button" @click="auth.logout()">
+        <button v-else class="btn ws-btn-outline btn-sm" type="button" @click="auth.logout()">
           Logout
         </button>
       </div>

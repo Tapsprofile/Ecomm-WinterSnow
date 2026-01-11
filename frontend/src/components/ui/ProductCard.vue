@@ -5,7 +5,7 @@ defineProps({
 </script>
 
 <template>
-  <RouterLink class="card h-100 text-decoration-none" :to="`/p/${item.slug}`">
+  <RouterLink class="card ws-card h-100 text-decoration-none" :to="`/p/${item.slug}`">
     <div class="ratio ratio-4x3 bg-body-tertiary rounded-3 overflow-hidden">
       <img v-if="item.thumbnailUrl" :src="item.thumbnailUrl" alt="" class="w-100 h-100 ws-cover" loading="lazy" />
       <div v-else class="d-flex align-items-center justify-content-center text-secondary small">No image</div>

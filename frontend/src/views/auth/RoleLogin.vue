@@ -48,7 +48,7 @@ async function submit() {
     if (redirect) router.push(redirect)
     else if (auth.role === 'Vendor') router.push('/vendor')
     else if (auth.role === 'Admin') router.push('/admin')
-    else router.push('/')
+    else router.push('/store')
   } catch (e) {
     error.value = e?.message || 'Login failed'
   } finally {
@@ -60,10 +60,10 @@ async function submit() {
 <template>
   <TopNav />
   <div class="container py-4">
-    <div class="card mx-auto" style="max-width: 520px;">
-      <div class="card-body">
-        <span class="badge text-bg-secondary">{{ expectedRole }} portal</span>
-        <h2 class="h4 mt-3 mb-1">{{ title() }}</h2>
+    <div class="card ws-card mx-auto" style="max-width: 560px;">
+      <div class="card-body p-4">
+        <div class="ws-section-kicker mb-2">{{ expectedRole }} portal</div>
+        <h2 class="ws-section-title mb-1">{{ title() }}</h2>
         <div class="text-secondary">Use the credentials for the selected portal.</div>
 
         <div v-if="error" class="alert alert-danger mt-3 mb-0" role="alert">
@@ -79,7 +79,7 @@ async function submit() {
             <label class="form-label">Password</label>
             <input class="form-control" type="password" v-model="password" autocomplete="current-password" />
           </div>
-          <button class="btn btn-primary w-100" :disabled="loading" type="submit">
+          <button class="btn ws-btn-dark w-100" :disabled="loading" type="submit">
             {{ loading ? 'Signing in…' : 'Sign in' }}
           </button>
         </form>

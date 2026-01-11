@@ -85,20 +85,21 @@ async function bulkSave() {
   </div>
   <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="card mt-3">
+  <div v-if="!loading" class="card ws-card mt-3">
     <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
       <div>
-        <div class="fw-bold">Inventory Manager</div>
+        <div class="ws-section-kicker mb-1">Inventory manager</div>
+        <div class="fw-bold">Bulk edit listings</div>
         <div class="text-secondary small">Search, bulk edit prices/stock, manage discounts and coupon eligibility.</div>
       </div>
       <div class="d-flex gap-2 align-items-center flex-wrap">
         <input class="form-control" style="width: 260px;" v-model="q" placeholder="Search products…" />
-        <button class="btn btn-primary" type="button" :disabled="saving" @click="bulkSave">{{ saving ? 'Saving…' : 'Bulk Save' }}</button>
+        <button class="btn ws-btn-dark" type="button" :disabled="saving" @click="bulkSave">{{ saving ? 'Saving…' : 'Bulk Save' }}</button>
       </div>
     </div>
   </div>
 
-  <div v-if="!loading" class="card mt-3">
+  <div v-if="!loading" class="card ws-card mt-3">
     <div class="card-body">
       <div class="table-responsive">
         <table class="table align-middle">
@@ -174,7 +175,7 @@ async function bulkSave() {
               </td>
               <td>
                 <div class="d-flex flex-column gap-2">
-                  <div v-for="v in p.variants" :key="v.variantId" class="card">
+                  <div v-for="v in p.variants" :key="v.variantId" class="card ws-card">
                     <div class="card-body py-2">
                       <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
                         <div>

@@ -56,7 +56,7 @@ onMounted(async () => {
 
     <div v-if="!loading && product" class="row g-3 align-items-start">
       <div class="col-12 col-lg-6">
-        <div class="card">
+        <div class="card ws-card">
           <div class="card-body">
             <div class="ratio ratio-4x3 bg-body-tertiary rounded-3 overflow-hidden">
               <img
@@ -75,7 +75,7 @@ onMounted(async () => {
                 v-for="m in product.media"
                 :key="m.url"
                 type="button"
-                class="btn btn-outline-secondary btn-sm p-0"
+                class="btn ws-btn-outline btn-sm p-0"
                 style="width: 96px; height: 64px;"
                 @click="zoomUrl = m.url"
               >
@@ -87,10 +87,10 @@ onMounted(async () => {
       </div>
 
       <div class="col-12 col-lg-6">
-        <div class="card">
+        <div class="card ws-card">
           <div class="card-body">
-            <span class="badge text-bg-secondary">Product</span>
-            <h2 class="h4 mt-3 mb-1">{{ product.name }}</h2>
+            <div class="ws-section-kicker mb-2">Product</div>
+            <h2 class="ws-section-title mb-1">{{ product.name }}</h2>
             <div v-if="product.shortDescription" class="text-secondary">{{ product.shortDescription }}</div>
 
             <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
@@ -113,8 +113,8 @@ onMounted(async () => {
             </div>
 
             <div class="d-flex gap-2 mt-3">
-              <button type="button" class="btn btn-primary" @click="addToCart">Add to Cart</button>
-              <RouterLink class="btn btn-outline-secondary" to="/checkout">Checkout</RouterLink>
+              <button type="button" class="btn ws-btn-dark" @click="addToCart">Add to Cart</button>
+              <RouterLink class="btn ws-btn-outline" to="/checkout">Checkout</RouterLink>
             </div>
 
             <div v-if="product.fullDescription" class="mt-4">
@@ -124,7 +124,7 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div class="card mt-3">
+        <div class="card ws-card mt-3">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
               <div class="fw-bold">Reviews & UGC</div>
@@ -133,7 +133,7 @@ onMounted(async () => {
 
             <div v-if="!product.reviews.length" class="text-secondary mt-3">No reviews yet.</div>
 
-            <div v-for="r in product.reviews" :key="r.reviewId" class="card mt-3">
+            <div v-for="r in product.reviews" :key="r.reviewId" class="card ws-card mt-3">
               <div class="card-body">
                 <div class="d-flex gap-2 align-items-center flex-wrap">
                   <b>{{ r.title }}</b>

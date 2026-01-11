@@ -26,10 +26,11 @@ watch(status, load)
 </script>
 
 <template>
-  <div class="card mt-3">
+  <div class="card ws-card mt-3">
     <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
       <div>
-        <div class="fw-bold">Order Fulfillment</div>
+        <div class="ws-section-kicker mb-1">Order fulfillment</div>
+        <div class="fw-bold">Orders</div>
         <div class="text-secondary small">Filters: Awaiting Pickup, Shipped, Completed.</div>
       </div>
       <select class="form-select" style="width: 240px;" v-model="status">
@@ -46,7 +47,7 @@ watch(status, load)
   </div>
   <div v-if="loading" class="text-secondary mt-3">Loading…</div>
 
-  <div v-if="!loading" class="card mt-3">
+  <div v-if="!loading" class="card ws-card mt-3">
     <div class="card-body">
       <div class="table-responsive">
         <table class="table align-middle">

@@ -28,10 +28,11 @@ onMounted(async () => {
   <div class="container py-3">
     <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
       <div>
-        <div class="fw-bold">WinterSnow</div>
-        <div class="text-secondary small">Marketplace storefront (Fluxstore-style layout)</div>
+        <div class="ws-section-kicker mb-1">Marketplace storefront</div>
+        <div class="ws-section-title">WinterSnow</div>
+        <div class="text-secondary small mt-1">Fluxstore-style layout + our marketplace APIs</div>
       </div>
-      <RouterLink to="/search" class="btn btn-primary btn-sm">
+      <RouterLink to="/search" class="btn ws-btn-dark btn-sm">
         <i class="bi bi-search me-1" />
         Browse
       </RouterLink>
@@ -41,7 +42,7 @@ onMounted(async () => {
       <HeroCarousel />
     </div>
 
-    <div class="card mt-3">
+    <div class="card ws-card mt-3">
       <div class="card-body">
         <div class="fw-bold">Shop by category</div>
         <CategoryStrip />
@@ -55,8 +56,8 @@ onMounted(async () => {
 
     <section v-if="!loading" class="mt-4">
       <div class="d-flex justify-content-between align-items-center">
-        <h3 class="h5 mb-0">Top Picks</h3>
-        <RouterLink class="btn btn-outline-secondary btn-sm" to="/search">See all</RouterLink>
+        <h3 class="h5 mb-0 ws-section-title">Top Picks</h3>
+        <RouterLink class="btn ws-btn-outline btn-sm" to="/search">See all</RouterLink>
       </div>
       <div class="row g-3 row-cols-2 row-cols-lg-4 mt-1">
         <div v-for="p in data.topPicks" :key="p.productId" class="col">
@@ -67,8 +68,8 @@ onMounted(async () => {
 
     <section v-if="!loading" class="mt-4">
       <div class="d-flex justify-content-between align-items-center">
-        <h3 class="h5 mb-0">New Arrivals</h3>
-        <RouterLink class="btn btn-outline-secondary btn-sm" to="/search">See all</RouterLink>
+        <h3 class="h5 mb-0 ws-section-title">New Arrivals</h3>
+        <RouterLink class="btn ws-btn-outline btn-sm" to="/search">See all</RouterLink>
       </div>
       <div class="row g-3 row-cols-2 row-cols-lg-4 mt-1">
         <div v-for="p in data.newArrivals" :key="p.productId" class="col">
@@ -79,8 +80,8 @@ onMounted(async () => {
 
     <section v-if="!loading" class="mt-4 mb-4">
       <div class="d-flex justify-content-between align-items-center">
-        <h3 class="h5 mb-0">Winter Collections</h3>
-        <RouterLink class="btn btn-outline-secondary btn-sm" to="/search">See all</RouterLink>
+        <h3 class="h5 mb-0 ws-section-title">Winter Collections</h3>
+        <RouterLink class="btn ws-btn-outline btn-sm" to="/search">See all</RouterLink>
       </div>
       <div class="row g-3 row-cols-2 row-cols-lg-4 mt-1">
         <div v-for="p in data.winterCollections" :key="p.productId" class="col">

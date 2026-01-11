@@ -75,13 +75,14 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="card mt-3">
+  <div class="card ws-card mt-3">
     <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
       <div>
+        <div class="ws-section-kicker mb-1">Create listing</div>
         <div class="fw-bold">Create Product Listing</div>
         <div class="text-secondary small">Add inventory, pricing, discounts, coupon eligibility, variants, and media.</div>
       </div>
-      <RouterLink class="btn btn-outline-secondary btn-sm" to="/vendor/inventory">Back to inventory</RouterLink>
+      <RouterLink class="btn ws-btn-outline btn-sm" to="/vendor/inventory">Back to inventory</RouterLink>
     </div>
   </div>
 
@@ -92,7 +93,7 @@ onMounted(load)
 
   <div v-if="!loading" class="row g-3 mt-1 align-items-start">
     <div class="col-12 col-lg-5">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="fw-bold mb-3">Listing details</div>
 
@@ -135,7 +136,7 @@ onMounted(load)
     </div>
 
     <div class="col-12 col-lg-7">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="fw-bold mb-3">Pricing, discounts, coupons</div>
           <div class="row g-2 align-items-end">
@@ -168,15 +169,15 @@ onMounted(load)
         </div>
       </div>
 
-      <div class="card mt-3">
+      <div class="card ws-card mt-3">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center">
             <div class="fw-bold">Variants (Inventory)</div>
-            <button class="btn btn-outline-secondary btn-sm" type="button" @click="addVariant">Add variant</button>
+            <button class="btn ws-btn-outline btn-sm" type="button" @click="addVariant">Add variant</button>
           </div>
 
           <div class="d-flex flex-column gap-2 mt-3">
-            <div v-for="(v, idx) in form.variants" :key="idx" class="card">
+            <div v-for="(v, idx) in form.variants" :key="idx" class="card ws-card">
               <div class="card-body">
                 <div class="row g-2">
                   <div class="col-4">
@@ -208,11 +209,11 @@ onMounted(load)
         </div>
       </div>
 
-      <div class="card mt-3">
+      <div class="card ws-card mt-3">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center">
             <div class="fw-bold">Media URLs</div>
-            <button class="btn btn-outline-secondary btn-sm" type="button" @click="addMedia">Add media</button>
+            <button class="btn ws-btn-outline btn-sm" type="button" @click="addMedia">Add media</button>
           </div>
           <div class="d-flex flex-column gap-2 mt-3">
             <input v-for="(u, idx) in form.mediaUrls" :key="idx" class="form-control" v-model="form.mediaUrls[idx]" placeholder="https://..." />
@@ -220,7 +221,7 @@ onMounted(load)
         </div>
       </div>
 
-      <button class="btn btn-primary w-100 mt-3" type="button" :disabled="saving" @click="submit">
+      <button class="btn ws-btn-dark w-100 mt-3" type="button" :disabled="saving" @click="submit">
         {{ saving ? 'Creating…' : 'Create listing (goes to Admin approval)' }}
       </button>
     </div>

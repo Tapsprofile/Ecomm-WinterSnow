@@ -27,7 +27,7 @@ onMounted(async () => {
 
   <div v-if="!loading" class="row g-3 mt-1">
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Revenue Today</div>
           <div class="h4 fw-bold mt-1 mb-0">INR {{ data.revenueToday }}</div>
@@ -35,7 +35,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Revenue (7 days)</div>
           <div class="h4 fw-bold mt-1 mb-0">INR {{ data.revenueThisWeek }}</div>
@@ -43,7 +43,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Average Order Value</div>
           <div class="h4 fw-bold mt-1 mb-0">INR {{ data.averageOrderValue }}</div>
@@ -52,7 +52,7 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div v-if="!loading" class="card mt-3">
+  <div v-if="!loading" class="card ws-card mt-3">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center">
         <div class="fw-bold">Top Winter Products</div>
@@ -62,7 +62,7 @@ onMounted(async () => {
       <div v-if="!data.topWinterProducts.length" class="text-secondary mt-3">No sales yet.</div>
 
       <div v-else class="d-flex flex-column gap-2 mt-3">
-        <div v-for="p in data.topWinterProducts" :key="p.productId" class="card">
+        <div v-for="p in data.topWinterProducts" :key="p.productId" class="card ws-card">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
               <div>

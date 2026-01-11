@@ -5,6 +5,13 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  /* WinterSnow design tokens (landing-page style) */
+  --ws-danger: #ef4444;
+  --ws-radius-lg: 1rem;
+  --ws-radius-xl: 1.5rem;
+  --ws-shadow-lite: 0 18px 36px -26px rgba(0, 0, 0, 0.5);
+  --ws-shadow-hover: 0 24px 48px -34px rgba(0, 0, 0, 0.55);
+
   /* Flat + high contrast defaults */
   --bs-body-bg: #f3f3f3;
   --bs-body-color: #0b0b0b;
@@ -56,16 +63,17 @@ body {
   background: var(--bs-body-bg);
 }
 
-/* Flat UI: remove shadows */
+/* Modern-yet-contrast UI: prefer subtle shadows on surfaces */
 .card,
 .dropdown-menu,
 .modal-content {
-  box-shadow: none !important;
+  box-shadow: var(--ws-shadow-lite);
 }
 
 /* High-contrast surfaces */
 .card {
   border-width: var(--bs-border-width) !important;
+  border-radius: var(--ws-radius-xl);
 }
 
 /* Make inputs/buttons visibly high-contrast */
@@ -76,6 +84,87 @@ body {
 .navbar,
 .dropdown-menu {
   border-width: var(--bs-border-width) !important;
+}
+
+/* WinterSnow: glass navigation (marketing + app) */
+.ws-nav-glass {
+  background: color-mix(in srgb, var(--bs-body-bg) 85%, transparent) !important;
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid color-mix(in srgb, var(--bs-border-color) 40%, transparent) !important;
+}
+.ws-nav-shadow {
+  box-shadow: 0 20px 40px -30px rgba(0, 0, 0, 0.45);
+}
+
+/* WinterSnow: buttons */
+.ws-btn-danger {
+  background: var(--ws-danger) !important;
+  border-color: var(--ws-danger) !important;
+  color: #fff !important;
+  font-weight: 800;
+  border-radius: 0.9rem;
+}
+.ws-btn-dark {
+  background: var(--bs-body-color) !important;
+  border-color: var(--bs-body-color) !important;
+  color: var(--bs-body-bg) !important;
+  font-weight: 800;
+  border-radius: 0.9rem;
+}
+.ws-btn-dark:hover {
+  background: var(--bs-primary) !important;
+  border-color: var(--bs-primary) !important;
+  color: #fff !important;
+}
+.ws-btn-outline {
+  background: transparent !important;
+  color: var(--bs-body-color) !important;
+  border-color: color-mix(in srgb, var(--bs-border-color) 55%, transparent) !important;
+  font-weight: 800;
+  border-radius: 0.9rem;
+}
+.ws-btn-outline:hover {
+  border-color: var(--ws-danger) !important;
+}
+
+/* WinterSnow: cards */
+.ws-card {
+  border-radius: var(--ws-radius-xl) !important;
+  border: 2px solid color-mix(in srgb, var(--bs-border-color) 50%, transparent) !important;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.ws-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--ws-shadow-hover);
+}
+
+/* WinterSnow: pill navigation (vendor/admin) */
+.ws-pills .nav-link {
+  border: 2px solid color-mix(in srgb, var(--bs-border-color) 55%, transparent);
+  border-radius: 0.9rem;
+  font-weight: 800;
+  color: var(--bs-body-color);
+}
+.ws-pills .nav-link:hover {
+  border-color: var(--ws-danger);
+}
+.ws-pills .nav-link.active {
+  background: var(--bs-primary);
+  border-color: var(--bs-primary);
+  color: #fff;
+}
+
+/* WinterSnow: headings */
+.ws-section-kicker {
+  color: var(--ws-danger);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.75rem;
+}
+.ws-section-title {
+  font-weight: 900;
+  letter-spacing: -0.03em;
 }
 
 /* Strong focus outlines for accessibility */

@@ -27,7 +27,7 @@ onMounted(async () => {
 
   <div v-if="!loading" class="row g-3 mt-1">
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Status</div>
           <div class="h5 fw-bold mt-1 mb-0">{{ data.status }}</div>
@@ -35,7 +35,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Uptime</div>
           <div class="h5 fw-bold mt-1 mb-0">{{ Math.round(data.uptimeSeconds) }}s</div>
@@ -43,7 +43,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">API latency</div>
           <div class="mt-2 d-flex gap-2 flex-wrap">
@@ -55,8 +55,9 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div v-if="!loading" class="card mt-3">
+  <div v-if="!loading" class="card ws-card mt-3">
     <div class="card-body">
+      <div class="ws-section-kicker mb-1">System health</div>
       <div class="fw-bold">Recent errors (from .NET middleware)</div>
       <div v-if="!data.recentErrors?.length" class="text-secondary mt-2">No errors captured.</div>
       <ul v-else class="mt-2 mb-0">

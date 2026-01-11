@@ -98,11 +98,11 @@ async function submitPayment() {
 <template>
   <TopNav />
   <div class="container py-3">
-    <div class="card">
+    <div class="card ws-card">
       <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
-          <span class="badge text-bg-secondary">3-step checkout</span>
-          <h2 class="h4 mt-2 mb-0">Checkout</h2>
+          <div class="ws-section-kicker mb-1">3-step checkout</div>
+          <h2 class="ws-section-title mb-0">Checkout</h2>
         </div>
         <span class="badge text-bg-secondary">Step {{ step }}/3</span>
       </div>
@@ -114,13 +114,13 @@ async function submitPayment() {
 
     <div class="row g-3 align-items-start mt-1">
       <div class="col-12 col-lg-6">
-        <div class="card">
+        <div class="card ws-card">
           <div class="card-body">
             <div class="fw-bold mb-2">Cart</div>
             <div v-if="!cart.items.length" class="text-secondary">Cart is empty.</div>
 
             <div v-else class="d-flex flex-column gap-2">
-              <div v-for="i in cart.items" :key="`${i.productId}:${i.variantId}`" class="card">
+              <div v-for="i in cart.items" :key="`${i.productId}:${i.variantId}`" class="card ws-card">
                 <div class="card-body d-flex justify-content-between gap-3 align-items-center flex-wrap">
                   <div>
                     <b>{{ i.name || `Product ${i.productId}` }}</b>
@@ -138,7 +138,7 @@ async function submitPayment() {
       </div>
 
       <div class="col-12 col-lg-6">
-        <div v-if="step === 1" class="card">
+        <div v-if="step === 1" class="card ws-card">
           <div class="card-body">
             <div class="fw-bold mb-3">1) Shipping Address (with validation)</div>
 
@@ -183,7 +183,7 @@ async function submitPayment() {
               </div>
             </div>
 
-            <button class="btn btn-primary w-100 mt-3" type="button" :disabled="loading || !cart.items.length" @click="validateAddress">
+            <button class="btn ws-btn-dark w-100 mt-3" type="button" :disabled="loading || !cart.items.length" @click="validateAddress">
               {{ loading ? 'Validating…' : 'Continue to Order Summary' }}
             </button>
 
@@ -193,7 +193,7 @@ async function submitPayment() {
           </div>
         </div>
 
-        <div v-else-if="step === 2" class="card">
+        <div v-else-if="step === 2" class="card ws-card">
           <div class="card-body">
             <div class="fw-bold mb-2">2) Order Summary (split by vendor)</div>
             <div class="text-secondary small">This previews how a single cart becomes multiple vendor orders.</div>
@@ -203,18 +203,18 @@ async function submitPayment() {
               <input class="form-control" v-model="couponCode" placeholder="WINTER10" />
             </div>
 
-            <button class="btn btn-primary w-100 mt-3" type="button" :disabled="loading" @click="loadPreview">
+            <button class="btn ws-btn-dark w-100 mt-3" type="button" :disabled="loading" @click="loadPreview">
               {{ loading ? 'Loading…' : 'Load Summary' }}
             </button>
           </div>
         </div>
 
-        <div v-else class="card">
+        <div v-else class="card ws-card">
           <div class="card-body">
             <div class="fw-bold mb-3">3) Secure Payment (Cashfree modal stub)</div>
 
             <div v-if="splitPreview.length" class="d-flex flex-column gap-2">
-              <div v-for="s in splitPreview" :key="s.vendorId" class="card">
+              <div v-for="s in splitPreview" :key="s.vendorId" class="card ws-card">
                 <div class="card-body">
                   <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
                     <b>Vendor #{{ s.vendorId }}</b>
@@ -234,7 +234,7 @@ async function submitPayment() {
               </div>
             </div>
 
-            <button class="btn btn-primary w-100 mt-3" type="button" :disabled="loading || !cart.items.length" @click="submitPayment">
+            <button class="btn ws-btn-dark w-100 mt-3" type="button" :disabled="loading || !cart.items.length" @click="submitPayment">
               {{ loading ? 'Creating session…' : 'Pay with Cashfree' }}
             </button>
 

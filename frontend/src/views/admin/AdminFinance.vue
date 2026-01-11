@@ -27,7 +27,7 @@ onMounted(async () => {
 
   <div v-if="!loading" class="row g-3 mt-1">
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Platform revenue (gross)</div>
           <div class="h4 fw-bold mt-1 mb-0">INR {{ data.platformRevenueGross }}</div>
@@ -35,7 +35,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Total commissions earned</div>
           <div class="h4 fw-bold mt-1 mb-0">INR {{ data.totalCommissionsEarned }}</div>
@@ -43,7 +43,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="col-12 col-md-4">
-      <div class="card">
+      <div class="card ws-card">
         <div class="card-body">
           <div class="text-secondary small">Orders</div>
           <div class="h4 fw-bold mt-1 mb-0">{{ data.ordersCount }}</div>
@@ -52,13 +52,14 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div v-if="!loading" class="card mt-3">
+  <div v-if="!loading" class="card ws-card mt-3">
     <div class="card-body">
+      <div class="ws-section-kicker mb-1">Finance</div>
       <div class="fw-bold">Bulk payouts (Cashfree API)</div>
       <div class="text-secondary small mt-1">
         This UI is ready to trigger bulk payouts, but the backend Cashfree payout API integration is intentionally stubbed in this scaffold.
       </div>
-      <button class="btn btn-outline-secondary mt-3" disabled>Trigger bulk payouts (stub)</button>
+      <button class="btn ws-btn-outline mt-3" disabled>Trigger bulk payouts (stub)</button>
     </div>
   </div>
 </template>
