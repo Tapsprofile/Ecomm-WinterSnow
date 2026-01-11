@@ -30,6 +30,9 @@ public class VendorInventoryItem
     public decimal? DiscountPercent { get; set; }
     public DateTime? DiscountStartUtc { get; set; }
     public DateTime? DiscountEndUtc { get; set; }
+    public bool IsVisibleInStorefront { get; set; }
+    public string ListingStatus { get; set; } = "Draft";
+    public List<string> AllowedPostcodes { get; set; } = [];
     public bool Published { get; set; }
     public bool IsApprovedByAdmin { get; set; }
     public List<InventoryVariant> Variants { get; set; } = [];

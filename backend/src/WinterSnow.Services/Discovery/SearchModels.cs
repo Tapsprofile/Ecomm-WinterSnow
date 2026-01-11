@@ -8,6 +8,7 @@ public class SearchQuery
     public string? Material { get; set; }
     public string? Size { get; set; }
     public string? Color { get; set; }
+    public string? PostalCode { get; set; }
 
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 24;

@@ -107,6 +107,8 @@ public class DatabaseBootstrapper
             DiscountPercent = 10,
             DiscountStartUtc = DateTime.UtcNow.AddDays(-1),
             DiscountEndUtc = DateTime.UtcNow.AddDays(7),
+            ListingStatus = WinterSnow.Core.Domain.Catalog.Listings.ListingStatus.Active,
+            IsVisibleInStorefront = true,
             Published = true,
             IsApprovedByAdmin = true,
             MetaTitle = "Senior Software Developer",
@@ -124,6 +126,8 @@ public class DatabaseBootstrapper
             Currency = "INR",
             VendorId = vendor1.Id,
             AllowCoupons = true,
+            ListingStatus = WinterSnow.Core.Domain.Catalog.Listings.ListingStatus.Active,
+            IsVisibleInStorefront = true,
             Published = true,
             IsApprovedByAdmin = true
         };
@@ -139,6 +143,8 @@ public class DatabaseBootstrapper
             Currency = "INR",
             VendorId = vendor2.Id,
             AllowCoupons = false,
+            ListingStatus = WinterSnow.Core.Domain.Catalog.Listings.ListingStatus.Draft,
+            IsVisibleInStorefront = false,
             Published = false,
             IsApprovedByAdmin = false
         };

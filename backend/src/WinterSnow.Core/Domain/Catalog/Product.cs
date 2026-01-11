@@ -1,4 +1,5 @@
 using WinterSnow.Core.Domain.Common;
+using WinterSnow.Core.Domain.Catalog.Listings;
 
 namespace WinterSnow.Core.Domain.Catalog;
 
@@ -35,6 +36,19 @@ public class Product : BaseEntity
     /// Whether coupons can be applied to this listing at checkout.
     /// </summary>
     public bool AllowCoupons { get; set; }
+
+    /// <summary>
+    /// Vendor lifecycle control:
+    /// - Draft: internal/vendor-only, not shown to customers
+    /// - Active: can be shown (subject to approvals/stock/visibility rules)
+    /// - EndOfLife: removed from customer listings; vendor can restore later
+    /// </summary>
+    public ListingStatus ListingStatus { get; set; } = ListingStatus.Draft;
+
+    /// <summary>
+    /// Vendor can keep listing internal (not visible to customers) even if approved.
+    /// </summary>
+    public bool IsVisibleInStorefront { get; set; } = true;
 
     public bool Published { get; set; }
     public bool IsApprovedByAdmin { get; set; }

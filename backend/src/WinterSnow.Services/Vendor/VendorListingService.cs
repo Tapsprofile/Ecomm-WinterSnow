@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WinterSnow.Core.Domain.Catalog;
+using WinterSnow.Core.Domain.Catalog.Listings;
 using WinterSnow.Data;
 
 namespace WinterSnow.Services.Vendor;
@@ -64,6 +65,7 @@ public class VendorListingService : IVendorListingService
             Currency = "INR",
             VendorId = vendorId,
             AllowCoupons = request.AllowCoupons,
+            IsVisibleInStorefront = request.IsVisibleInStorefront,
             DiscountPercent = request.DiscountPercent,
             DiscountStartUtc = request.DiscountStartUtc,
             DiscountEndUtc = request.DiscountEndUtc,
@@ -71,8 +73,29 @@ public class VendorListingService : IVendorListingService
             IsApprovedByAdmin = false
         };
 
+        if (Enum.TryParse<ListingStatus>(request.ListingStatus, true, out var st))
+            product.ListingStatus = st;
+
         _db.Products.Add(product);
         await _db.SaveChangesAsync(ct);
+
+        if (request.AllowedPostcodes is not null)
+        {
+            var normalized = request.AllowedPostcodes
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => x.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            foreach (var pc in normalized)
+            {
+                _db.ProductPostcodeVisibilities.Add(new ProductPostcodeVisibility
+                {
+                    ProductId = product.Id,
+                    PostalCode = pc
+                });
+            }
+        }
 
         // Variants (inventory per size/color)
         var variants = request.Variants.Count == 0
@@ -124,9 +147,35 @@ public class VendorListingService : IVendorListingService
         product.CategoryId = request.CategoryId;
         product.Price = request.Price;
         product.AllowCoupons = request.AllowCoupons;
+        product.IsVisibleInStorefront = request.IsVisibleInStorefront;
         product.DiscountPercent = request.DiscountPercent;
         product.DiscountStartUtc = request.DiscountStartUtc;
         product.DiscountEndUtc = request.DiscountEndUtc;
+
+        if (Enum.TryParse<ListingStatus>(request.ListingStatus, true, out var st))
+            product.ListingStatus = st;
+
+        // Postcode restrictions: replace list when provided
+        if (request.AllowedPostcodes is not null)
+        {
+            var normalized = request.AllowedPostcodes
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => x.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var existing = await _db.ProductPostcodeVisibilities.Where(x => x.ProductId == productId).ToListAsync(ct);
+            _db.ProductPostcodeVisibilities.RemoveRange(existing);
+
+            foreach (var pc in normalized)
+            {
+                _db.ProductPostcodeVisibilities.Add(new ProductPostcodeVisibility
+                {
+                    ProductId = productId,
+                    PostalCode = pc
+                });
+            }
+        }
 
         // If vendor changes listing details, keep approval as-is, but you may choose to re-approve.
         await _db.SaveChangesAsync(ct);

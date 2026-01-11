@@ -84,3 +84,4 @@
 /workspace/backend/src/WinterSnow.WebApi/bin/Release/net8.0/Microsoft.Extensions.Diagnostics.dll
 /workspace/backend/src/WinterSnow.WebApi/bin/Release/net8.0/Microsoft.Extensions.Diagnostics.Abstractions.dll
 /workspace/backend/src/WinterSnow.WebApi/bin/Release/net8.0/Microsoft.Extensions.Http.dll
+/workspace/backend/src/WinterSnow.WebApi/bin/Release/net8.0/WinterSnow.WebApi.staticwebassets.runtime.json

@@ -9,5 +9,7 @@ public class ProductMedia : BaseEntity
     public required string Url { get; set; }
     public string MediaType { get; set; } = "image"; // image|video
     public int DisplayOrder { get; set; }
+
+    public int? MediaAttachmentId { get; set; }
 }
 

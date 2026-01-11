@@ -83,6 +83,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("frontend");
 
+// Serve uploaded product media (local dev storage)
+app.UseStaticFiles();
+
 // Metrics + error capture for "System Health" panel.
 app.Use(async (ctx, next) =>
 {

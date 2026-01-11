@@ -18,6 +18,9 @@ public class CreateListingRequest
 
     public decimal Price { get; set; }
     public bool AllowCoupons { get; set; }
+    public bool IsVisibleInStorefront { get; set; } = true;
+    public string ListingStatus { get; set; } = "Draft"; // Draft|Active|EndOfLife
+    public List<string>? AllowedPostcodes { get; set; }
 
     public decimal? DiscountPercent { get; set; }
     public DateTime? DiscountStartUtc { get; set; }
@@ -46,6 +49,14 @@ public class UpdateListingRequest
 
     public decimal Price { get; set; }
     public bool AllowCoupons { get; set; }
+    public bool IsVisibleInStorefront { get; set; }
+    public string ListingStatus { get; set; } = "Draft"; // Draft|Active|EndOfLife
+
+    /// <summary>
+    /// If provided, replaces allowed postcode list (used to restrict visibility).
+    /// If empty list, restrictions are cleared.
+    /// </summary>
+    public List<string>? AllowedPostcodes { get; set; }
 
     public decimal? DiscountPercent { get; set; }
     public DateTime? DiscountStartUtc { get; set; }

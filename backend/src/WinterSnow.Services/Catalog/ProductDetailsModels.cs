@@ -19,6 +19,8 @@ public class ProductDetails
     public List<ProductMediaDto> Media { get; set; } = [];
     public List<ProductVariantDto> Variants { get; set; } = [];
     public List<ReviewDto> Reviews { get; set; } = [];
+
+    public List<string> AllowedPostcodes { get; set; } = [];
 }
 
 public class ProductMediaDto

@@ -11,6 +11,7 @@ using WinterSnow.Core.Domain.Auditing;
 using WinterSnow.Core.Domain.Webhooks;
 using WinterSnow.Core.Domain.Returns;
 using WinterSnow.Core.Domain.Notifications;
+using WinterSnow.Core.Domain.Media;
 
 namespace WinterSnow.Data;
 
@@ -28,6 +29,7 @@ public class WinterSnowDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
     public DbSet<ProductMedia> ProductMedia => Set<ProductMedia>();
+    public DbSet<ProductPostcodeVisibility> ProductPostcodeVisibilities => Set<ProductPostcodeVisibility>();
 
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<Order> Orders => Set<Order>();
@@ -51,6 +53,7 @@ public class WinterSnowDbContext : DbContext
     public DbSet<WebhookSubscription> WebhookSubscriptions => Set<WebhookSubscription>();
     public DbSet<ReturnRequest> ReturnRequests => Set<ReturnRequest>();
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<MediaAttachment> MediaAttachments => Set<MediaAttachment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -76,6 +79,16 @@ public class WinterSnowDbContext : DbContext
         modelBuilder.Entity<ProductVariant>(b =>
         {
             b.HasIndex(x => new { x.ProductId, x.Sku });
+        });
+
+        modelBuilder.Entity<ProductPostcodeVisibility>(b =>
+        {
+            b.HasIndex(x => new { x.ProductId, x.PostalCode }).IsUnique();
+        });
+
+        modelBuilder.Entity<MediaAttachment>(b =>
+        {
+            b.HasIndex(x => x.CreatedOnUtc);
         });
 
         modelBuilder.Entity<Order>(b =>

@@ -11,17 +11,20 @@ public class SearchService : ISearchService
     private readonly IRepository<ProductVariant> _variants;
     private readonly IRepository<ProductMedia> _media;
     private readonly IRepository<Review> _reviews;
+    private readonly IRepository<ProductPostcodeVisibility> _postcodes;
 
     public SearchService(
         IRepository<Product> products,
         IRepository<ProductVariant> variants,
         IRepository<ProductMedia> media,
-        IRepository<Review> reviews)
+        IRepository<Review> reviews,
+        IRepository<ProductPostcodeVisibility> postcodes)
     {
         _products = products;
         _variants = variants;
         _media = media;
         _reviews = reviews;
+        _postcodes = postcodes;
     }
 
     public async Task<List<string>> AutocompleteAsync(string q, CancellationToken ct = default)
@@ -48,6 +51,8 @@ public class SearchService : ISearchService
 
         // Only show customer-visible listings:
         // - approved + published
+        // - Active listing status
+        // - vendor marked visible in storefront
         // - at least one variant has stock > 0
         var inStockProductIds = _variants.Table
             .Where(v => v.StockQuantity > 0)
@@ -56,7 +61,24 @@ public class SearchService : ISearchService
 
         var baseProducts = _products.Table
             .Where(p => p.Published && p.IsApprovedByAdmin)
+            .Where(p => p.IsVisibleInStorefront)
+            .Where(p => p.ListingStatus == WinterSnow.Core.Domain.Catalog.Listings.ListingStatus.Active)
             .Where(p => inStockProductIds.Contains(p.Id));
+
+        // Postcode visibility:
+        // - If a product has any entries in ProductPostcodeVisibility, it's only shown for matching postal codes.
+        // - If no postal code is provided by the shopper, restricted products are hidden.
+        var restrictedProductIds = _postcodes.Table.Select(x => x.ProductId).Distinct();
+        if (string.IsNullOrWhiteSpace(query.PostalCode))
+        {
+            baseProducts = baseProducts.Where(p => !restrictedProductIds.Contains(p.Id));
+        }
+        else
+        {
+            var pc = query.PostalCode.Trim();
+            var allowedProductIds = _postcodes.Table.Where(x => x.PostalCode == pc).Select(x => x.ProductId).Distinct();
+            baseProducts = baseProducts.Where(p => !restrictedProductIds.Contains(p.Id) || allowedProductIds.Contains(p.Id));
+        }
 
         if (!string.IsNullOrWhiteSpace(q))
             baseProducts = baseProducts.Where(p => p.Name.Contains(q) || (p.ShortDescription != null && p.ShortDescription.Contains(q)));

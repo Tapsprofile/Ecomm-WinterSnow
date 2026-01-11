@@ -19,6 +19,9 @@ onMounted(async () => {
   error.value = null
   try {
     items.value = await apiGet('/api/vendor/inventory')
+    for (const p of items.value) {
+      p.allowedPostcodesText = (p.allowedPostcodes || []).join(', ')
+    }
   } catch (e) {
     error.value = e?.message || 'Failed to load inventory'
   } finally {
@@ -32,6 +35,14 @@ async function bulkSave() {
   try {
     // Save product-level fields (discounts/coupon eligibility) first.
     for (const p of items.value) {
+      const allowedPostcodes =
+        typeof p.allowedPostcodesText === 'string'
+          ? p.allowedPostcodesText
+              .split(/[\n,]+/g)
+              .map((x) => x.trim())
+              .filter(Boolean)
+          : []
+
       await apiPut(`/api/vendor/listings/${p.productId}`, {
         name: p.name,
         shortDescription: p.shortDescription ?? null,
@@ -40,6 +51,9 @@ async function bulkSave() {
         categoryId: p.categoryId ?? null,
         price: p.price,
         allowCoupons: !!p.allowCoupons,
+        isVisibleInStorefront: !!p.isVisibleInStorefront,
+        listingStatus: p.listingStatus || 'Draft',
+        allowedPostcodes,
         discountPercent: p.discountPercent ?? null,
         discountStartUtc: p.discountStartUtc ?? null,
         discountEndUtc: p.discountEndUtc ?? null
@@ -93,6 +107,8 @@ async function bulkSave() {
               <th>Product</th>
               <th>Base Price</th>
               <th>Status</th>
+              <th style="min-width: 240px;">Lifecycle / Visibility</th>
+              <th style="min-width: 260px;">Postcodes</th>
               <th style="min-width: 260px;">Discount / Coupons</th>
               <th style="min-width: 420px;">Variations (Size/Color Matrix)</th>
             </tr>
@@ -107,6 +123,32 @@ async function bulkSave() {
               <td>
                 <span v-if="p.isApprovedByAdmin && p.published" class="badge text-bg-success">Live</span>
                 <span v-else class="badge text-bg-secondary">Pending approval</span>
+              </td>
+              <td>
+                <div class="d-flex flex-column gap-2">
+                  <div>
+                    <label class="form-label small text-secondary mb-1">Listing status</label>
+                    <select class="form-select form-select-sm" v-model="p.listingStatus">
+                      <option value="Draft">Draft</option>
+                      <option value="Active">Active</option>
+                      <option value="EndOfLife">End Of Life (EOL)</option>
+                    </select>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" :id="`visible-${p.productId}`" v-model="p.isVisibleInStorefront" />
+                    <label class="form-check-label" :for="`visible-${p.productId}`">Visible to customers</label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <label class="form-label small text-secondary mb-1">Allowed postcodes (optional)</label>
+                <textarea
+                  class="form-control form-control-sm"
+                  rows="3"
+                  v-model="p.allowedPostcodesText"
+                  placeholder="e.g. 560001, 110001"
+                />
+                <div class="text-secondary small mt-1">If set, listing is shown only for those postcodes.</div>
               </td>
               <td>
                 <div class="d-flex flex-column gap-2">

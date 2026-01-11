@@ -14,6 +14,7 @@ const size = ref(route.query.size?.toString() || '')
 const color = ref(route.query.color?.toString() || '')
 const minPrice = ref(route.query.minPrice?.toString() || '')
 const maxPrice = ref(route.query.maxPrice?.toString() || '')
+const postalCode = ref(route.query.postalCode?.toString() || '')
 
 const data = ref({ items: [], total: 0, facets: { sizes: [], colors: [], materials: [] } })
 const loading = ref(false)
@@ -29,6 +30,7 @@ function syncQuery() {
       color: color.value || undefined,
       minPrice: minPrice.value || undefined,
       maxPrice: maxPrice.value || undefined
+      ,postalCode: postalCode.value || undefined
     }
   })
 }
@@ -41,6 +43,7 @@ const queryString = computed(() => {
   if (color.value) params.set('color', color.value)
   if (minPrice.value) params.set('minPrice', minPrice.value)
   if (maxPrice.value) params.set('maxPrice', maxPrice.value)
+  if (postalCode.value) params.set('postalCode', postalCode.value)
   return params.toString()
 })
 
@@ -57,7 +60,7 @@ async function load() {
 }
 
 let t = null
-watch([q, material, size, color, minPrice, maxPrice], () => {
+watch([q, material, size, color, minPrice, maxPrice, postalCode], () => {
   clearTimeout(t)
   t = setTimeout(() => {
     syncQuery()
@@ -91,6 +94,12 @@ onMounted(load)
                 <label class="form-label small text-secondary">Max Price</label>
                 <input class="form-control" v-model="maxPrice" inputmode="numeric" />
               </div>
+            </div>
+
+            <div class="mt-3">
+              <label class="form-label small text-secondary">Delivery postal code (optional)</label>
+              <input class="form-control" v-model="postalCode" placeholder="e.g. 560001" />
+              <div class="text-secondary small mt-1">Restricted listings only appear when this is set.</div>
             </div>
 
             <div class="mt-3">

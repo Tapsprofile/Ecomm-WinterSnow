@@ -70,6 +70,12 @@ public class VendorDashboardService : IVendorDashboardService
             .ThenBy(v => v.Id)
             .ToListAsync(ct);
 
+        var postcodes = await _db.ProductPostcodeVisibilities
+            .Where(x => productIds.Contains(x.ProductId))
+            .GroupBy(x => x.ProductId)
+            .Select(g => new { ProductId = g.Key, Codes = g.Select(x => x.PostalCode).ToList() })
+            .ToListAsync(ct);
+
         return products.Select(p => new VendorInventoryItem
         {
             ProductId = p.Id,
@@ -84,6 +90,9 @@ public class VendorDashboardService : IVendorDashboardService
             DiscountPercent = p.DiscountPercent,
             DiscountStartUtc = p.DiscountStartUtc,
             DiscountEndUtc = p.DiscountEndUtc,
+            IsVisibleInStorefront = p.IsVisibleInStorefront,
+            ListingStatus = p.ListingStatus.ToString(),
+            AllowedPostcodes = postcodes.FirstOrDefault(x => x.ProductId == p.Id)?.Codes ?? [],
             Published = p.Published,
             IsApprovedByAdmin = p.IsApprovedByAdmin,
             Variants = variants.Where(v => v.ProductId == p.Id).Select(v => new InventoryVariant

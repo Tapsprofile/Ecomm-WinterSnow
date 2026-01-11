@@ -12,19 +12,22 @@ public class ProductCatalogService : IProductCatalogService
     private readonly IRepository<ProductMedia> _media;
     private readonly IRepository<Review> _reviews;
     private readonly IRepository<ReviewMedia> _reviewMedia;
+    private readonly IRepository<ProductPostcodeVisibility> _postcodes;
 
     public ProductCatalogService(
         IRepository<Product> products,
         IRepository<ProductVariant> variants,
         IRepository<ProductMedia> media,
         IRepository<Review> reviews,
-        IRepository<ReviewMedia> reviewMedia)
+        IRepository<ReviewMedia> reviewMedia,
+        IRepository<ProductPostcodeVisibility> postcodes)
     {
         _products = products;
         _variants = variants;
         _media = media;
         _reviews = reviews;
         _reviewMedia = reviewMedia;
+        _postcodes = postcodes;
     }
 
     public async Task<ProductDetails?> GetProductBySlugAsync(string slug, CancellationToken ct = default)
@@ -33,6 +36,8 @@ public class ProductCatalogService : IProductCatalogService
         var s = slug.Trim().ToLowerInvariant();
         var product = await _products.Table
             .Where(p => p.Published && p.IsApprovedByAdmin)
+            .Where(p => p.IsVisibleInStorefront)
+            .Where(p => p.ListingStatus == WinterSnow.Core.Domain.Catalog.Listings.ListingStatus.Active)
             .FirstOrDefaultAsync(p => p.Slug.ToLower() == s, ct);
 
         if (product is null)
@@ -107,6 +112,12 @@ public class ProductCatalogService : IProductCatalogService
         foreach (var r in reviews)
             r.MediaUrls = mediaByReview.FirstOrDefault(x => x.ReviewId == r.ReviewId)?.Urls ?? [];
 
+        var allowedPostcodes = await _postcodes.Table
+            .Where(x => x.ProductId == product.Id)
+            .OrderBy(x => x.PostalCode)
+            .Select(x => x.PostalCode)
+            .ToListAsync(ct);
+
         return new ProductDetails
         {
             ProductId = product.Id,
@@ -123,7 +134,8 @@ public class ProductCatalogService : IProductCatalogService
             Currency = product.Currency,
             Media = media,
             Variants = variants,
-            Reviews = reviews
+            Reviews = reviews,
+            AllowedPostcodes = allowedPostcodes
         };
     }
 
@@ -132,7 +144,10 @@ public class ProductCatalogService : IProductCatalogService
         var key = sectionKey.Trim().ToLowerInvariant();
         var now = DateTime.UtcNow;
 
-        IQueryable<Product> query = _products.Table.Where(p => p.Published && p.IsApprovedByAdmin);
+        IQueryable<Product> query = _products.Table
+            .Where(p => p.Published && p.IsApprovedByAdmin)
+            .Where(p => p.IsVisibleInStorefront)
+            .Where(p => p.ListingStatus == WinterSnow.Core.Domain.Catalog.Listings.ListingStatus.Active);
 
         // Only show in-stock listings on homepage.
         var inStockProductIds = _variants.Table
