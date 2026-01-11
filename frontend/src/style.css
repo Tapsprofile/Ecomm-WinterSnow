@@ -32,6 +32,10 @@
   --bs-primary: #2563eb;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Bootstrap 5.3 dark mode */
 [data-bs-theme="dark"] {
   --bs-body-bg: #000000;

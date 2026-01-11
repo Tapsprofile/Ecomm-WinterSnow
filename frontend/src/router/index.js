@@ -1,6 +1,7 @@
 import { createRouter as _createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
+import LandingPage from '../views/LandingPage.vue'
 import StorefrontHome from '../views/storefront/StorefrontHome.vue'
 import StorefrontSearch from '../views/storefront/StorefrontSearch.vue'
 import ProductDetails from '../views/storefront/ProductDetails.vue'
@@ -26,7 +27,8 @@ export function createRouter() {
   const router = _createRouter({
     history: createWebHistory(),
     routes: [
-      { path: '/', name: 'home', component: StorefrontHome },
+      { path: '/', name: 'landing', component: LandingPage },
+      { path: '/store', name: 'home', component: StorefrontHome },
       { path: '/search', name: 'search', component: StorefrontSearch },
       { path: '/p/:slug', name: 'product', component: ProductDetails, props: true },
       { path: '/checkout', name: 'checkout', component: Checkout },

@@ -77,7 +77,7 @@ onUnmounted(() => {
 <template>
   <nav class="navbar navbar-expand-lg sticky-top bg-body border-bottom">
     <div class="container">
-      <RouterLink to="/" class="navbar-brand fw-bold">WinterSnow</RouterLink>
+      <RouterLink to="/store" class="navbar-brand fw-bold">WinterSnow</RouterLink>
 
       <div class="d-flex flex-grow-1 align-items-center gap-2 position-relative" style="max-width: 720px;">
         <form class="flex-grow-1" @submit.prevent="onSearchSubmit">
