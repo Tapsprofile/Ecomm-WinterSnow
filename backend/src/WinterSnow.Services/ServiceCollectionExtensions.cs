@@ -14,6 +14,8 @@ using WinterSnow.Services.System;
 using WinterSnow.Services.Vendor;
 using WinterSnow.Services.Webhooks;
 using WinterSnow.Services.Notifications;
+using WinterSnow.Services.Customers;
+using WinterSnow.Services.Reviews;
 
 namespace WinterSnow.Services;
 
@@ -56,6 +58,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IWebhookAdminService, WebhookAdminService>();
         services.AddScoped<IWebhookDispatcher, WebhookDispatcher>();
         services.AddScoped<IReturnService, ReturnService>();
+        services.AddScoped<ICustomerOrderService, CustomerOrderService>();
+        services.AddScoped<IReviewService, ReviewService>();
 
         // Notifications (internal queue by default)
         services.AddSingleton<INotificationQueue, InternalNotificationQueue>();

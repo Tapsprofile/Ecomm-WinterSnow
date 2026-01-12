@@ -10,6 +10,11 @@ import Checkout from '../views/storefront/Checkout.vue'
 import Login from '../views/auth/Login.vue'
 import RoleLogin from '../views/auth/RoleLogin.vue'
 
+import AccountHome from '../views/account/AccountHome.vue'
+import MyOrders from '../views/account/MyOrders.vue'
+import OrderDetails from '../views/account/OrderDetails.vue'
+import MyReturns from '../views/account/MyReturns.vue'
+
 import VendorLayout from '../layouts/VendorLayout.vue'
 import VendorDashboard from '../views/vendor/VendorDashboard.vue'
 import VendorInventory from '../views/vendor/VendorInventory.vue'
@@ -37,6 +42,11 @@ export function createRouter() {
       { path: '/login/customer', name: 'login.customer', component: RoleLogin, meta: { loginRole: 'Customer' } },
       { path: '/login/vendor', name: 'login.vendor', component: RoleLogin, meta: { loginRole: 'Vendor' } },
       { path: '/login/admin', name: 'login.admin', component: RoleLogin, meta: { loginRole: 'Admin' } },
+
+      { path: '/account', name: 'account', component: AccountHome, meta: { requiresAuth: true, role: 'Customer' } },
+      { path: '/account/orders', name: 'account.orders', component: MyOrders, meta: { requiresAuth: true, role: 'Customer' } },
+      { path: '/account/orders/:orderId', name: 'account.orders.details', component: OrderDetails, meta: { requiresAuth: true, role: 'Customer' } },
+      { path: '/account/returns', name: 'account.returns', component: MyReturns, meta: { requiresAuth: true, role: 'Customer' } },
 
       {
         path: '/vendor',

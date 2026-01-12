@@ -53,6 +53,12 @@ const roleLink = computed(() => {
   return null
 })
 
+const accountLink = computed(() => {
+  if (!auth.isAuthenticated) return null
+  if (auth.role === 'Customer') return { label: 'My Account', to: '/account' }
+  return null
+})
+
 function onSearchSubmit() {
   router.push({ name: 'search', query: { q: q.value || undefined } })
   open.value = false
@@ -170,6 +176,11 @@ onUnmounted(() => {
         </div>
 
         <ThemeToggle />
+
+        <RouterLink v-if="accountLink" :to="accountLink.to" class="btn ws-btn-outline btn-sm">
+          <i class="bi bi-person me-1" />
+          {{ accountLink.label }}
+        </RouterLink>
 
         <RouterLink v-if="roleLink" :to="roleLink.to" class="btn ws-btn-outline btn-sm">
           <i class="bi bi-grid me-1" />

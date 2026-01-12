@@ -2,17 +2,27 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import TopNav from '../../components/ui/TopNav.vue'
-import { apiGet } from '../../lib/api'
+import { apiGet, apiPost } from '../../lib/api'
 import { useCartStore } from '../../stores/cart'
+import { useAuthStore } from '../../stores/auth'
 
 const route = useRoute()
 const cart = useCartStore()
+const auth = useAuthStore()
 
 const loading = ref(true)
 const error = ref(null)
 const product = ref(null)
 const selectedVariantId = ref(null)
 const zoomUrl = ref(null)
+
+const reviewForm = ref({
+  rating: 5,
+  title: '',
+  reviewText: '',
+  mediaUrls: ['']
+})
+const reviewSaving = ref(false)
 
 const effectiveVariant = computed(() => {
   if (!product.value) return null
@@ -29,6 +39,32 @@ function addToCart() {
     quantity: 1,
     name: product.value.name
   })
+}
+
+function addReviewMedia() {
+  reviewForm.value.mediaUrls.push('')
+}
+
+async function submitReview() {
+  if (!product.value) return
+  error.value = null
+  reviewSaving.value = true
+  try {
+    await apiPost('/api/reviews', {
+      productId: product.value.productId,
+      rating: reviewForm.value.rating,
+      title: reviewForm.value.title,
+      reviewText: reviewForm.value.reviewText,
+      mediaUrls: reviewForm.value.mediaUrls
+    })
+    reviewForm.value = { rating: 5, title: '', reviewText: '', mediaUrls: [''] }
+    const slug = route.params.slug.toString()
+    product.value = await apiGet(`/api/storefront/products/${encodeURIComponent(slug)}`)
+  } catch (e) {
+    error.value = e?.message || 'Failed to submit review'
+  } finally {
+    reviewSaving.value = false
+  }
 }
 
 onMounted(async () => {
@@ -129,6 +165,60 @@ onMounted(async () => {
             <div class="d-flex justify-content-between align-items-center">
               <div class="fw-bold">Reviews & UGC</div>
               <span class="badge text-bg-secondary">{{ product.reviews.length }} reviews</span>
+            </div>
+
+            <div v-if="auth.isAuthenticated && auth.role === 'Customer'" class="card ws-card mt-3">
+              <div class="card-body">
+                <div class="fw-bold">Write a review</div>
+                <div class="text-secondary small">WooCommerce-style review submission (verified purchase is detected automatically).</div>
+
+                <div class="row g-2 mt-2">
+                  <div class="col-4">
+                    <label class="form-label small text-secondary">Rating</label>
+                    <select class="form-select form-select-sm" v-model.number="reviewForm.rating">
+                      <option :value="5">5</option>
+                      <option :value="4">4</option>
+                      <option :value="3">3</option>
+                      <option :value="2">2</option>
+                      <option :value="1">1</option>
+                    </select>
+                  </div>
+                  <div class="col-8">
+                    <label class="form-label small text-secondary">Title</label>
+                    <input class="form-control form-control-sm" v-model="reviewForm.title" placeholder="Great quality" />
+                  </div>
+                </div>
+
+                <div class="mt-2">
+                  <label class="form-label small text-secondary">Review</label>
+                  <textarea class="form-control form-control-sm" rows="3" v-model="reviewForm.reviewText" placeholder="Share details about fit, warmth, delivery, etc." />
+                </div>
+
+                <div class="mt-2">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <label class="form-label small text-secondary mb-0">Media URLs (optional)</label>
+                    <button class="btn ws-btn-outline btn-sm" type="button" @click="addReviewMedia">Add</button>
+                  </div>
+                  <div class="d-flex flex-column gap-2 mt-2">
+                    <input
+                      v-for="(_, idx) in reviewForm.mediaUrls"
+                      :key="idx"
+                      class="form-control form-control-sm"
+                      v-model="reviewForm.mediaUrls[idx]"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+
+                <button
+                  class="btn ws-btn-dark w-100 mt-3"
+                  type="button"
+                  :disabled="reviewSaving || !reviewForm.title || !reviewForm.reviewText"
+                  @click="submitReview"
+                >
+                  {{ reviewSaving ? 'Submitting…' : 'Submit review' }}
+                </button>
+              </div>
             </div>
 
             <div v-if="!product.reviews.length" class="text-secondary mt-3">No reviews yet.</div>

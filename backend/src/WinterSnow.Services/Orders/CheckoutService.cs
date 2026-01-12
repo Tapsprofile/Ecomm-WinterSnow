@@ -334,7 +334,7 @@ public class CheckoutService : ICheckoutService
             RecipientUserId = customerId,
             Title = "Order placed",
             Body = $"Your checkout created {createdOrderIds.Count} order(s). Payment group: {paymentGroupId}.",
-            ActionUrl = "/"
+            ActionUrl = "/account/orders"
         }, ct);
 
         foreach (var vendorId in split.Select(s => s.VendorId).Distinct())
