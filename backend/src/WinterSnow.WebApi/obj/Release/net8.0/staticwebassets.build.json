@@ -1,0 +1,19 @@
+{
+  "Version": 1,
+  "Hash": "/drSNwL32NIVsf7bbqyG4IaAq0T+OPD3i/qhg6u4az4=",
+  "Source": "WinterSnow.WebApi",
+  "BasePath": "_content/WinterSnow.WebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "WinterSnow.WebApi/wwwroot",
+      "Source": "WinterSnow.WebApi",
+      "ContentRoot": "/workspace/backend/src/WinterSnow.WebApi/wwwroot/",
+      "BasePath": "_content/WinterSnow.WebApi",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": []
+}
